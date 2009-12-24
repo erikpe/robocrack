@@ -2,7 +2,7 @@ package robocrack.engine.simulator;
 
 import java.util.List;
 
-import robocrack.engine.board.Board;
+import robocrack.engine.board.BoardModel;
 import robocrack.engine.board.Cell;
 
 public class Simulator
@@ -13,7 +13,7 @@ public class Simulator
     private List<Instruction> f4;
     private List<Instruction> f5;
     
-    private Board board;
+    private BoardModel board;
     
     public Simulator(List<List<Instruction>> program)
     {

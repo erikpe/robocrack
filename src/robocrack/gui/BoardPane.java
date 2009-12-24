@@ -6,7 +6,7 @@ import java.util.Observer;
 
 import javax.swing.JComponent;
 
-import robocrack.engine.board.Board;
+import robocrack.engine.board.BoardModel;
 import robocrack.engine.board.Coordinate;
 
 @SuppressWarnings("serial")
@@ -14,15 +14,15 @@ public class BoardPane extends JComponent implements Observer
 {
     private final static int CELL_SPACING = 1;
     
-    private final Board board;
-    private final GuiModel guiState;
+    private final BoardModel board;
+    private final GuiModel guiModel;
     
     private final CellComponent[][] cells;
     
-    BoardPane(final Board board, final GuiModel guiState)
+    BoardPane(final BoardModel board, final GuiModel guiState)
     {
         this.board = board;
-        this.guiState = guiState;
+        this.guiModel = guiState;
         
         this.cells = new CellComponent[board.width()][board.height()];
         buildGrid();
@@ -37,7 +37,7 @@ public class BoardPane extends JComponent implements Observer
             {
                 final Coordinate coordinate = Coordinate.make(x, y);
                 CellComponent cc = new CellComponent(board, coordinate,
-                        guiState);
+                        guiModel);
                 cells[x][y] = cc;
                 add(cc);
                 

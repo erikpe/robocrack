@@ -16,7 +16,7 @@ public class BoardButtonPane extends JComponent
     private static final int BUTTON_HEIGHT = BUTTON_WIDTH;
     private static final int BUTTON_SPACING = 1;
     
-    private final GuiModel guiState;
+    private final GuiModel guiModel;
     
     private final ToggleButton<BoardButton> bRed;
     private final ToggleButton<BoardButton> bGreen;
@@ -28,18 +28,18 @@ public class BoardButtonPane extends JComponent
     
     BoardButtonPane(final GuiModel guiState)
     {
-        this.guiState = guiState;
+        this.guiModel = guiState;
         
         bRed = new ToggleButton<BoardButton>(Color.RED,
-                BoardButton.RED_BUTTON, this.guiState);
+                BoardButton.RED_BUTTON, this.guiModel);
         bGreen = new ToggleButton<BoardButton>(Color.GREEN,
-                BoardButton.GREEN_BUTTON, this.guiState);
+                BoardButton.GREEN_BUTTON, this.guiModel);
         bBlue = new ToggleButton<BoardButton>(Color.BLUE,
-                BoardButton.BLUE_BUTTON, this.guiState);
+                BoardButton.BLUE_BUTTON, this.guiModel);
         bStar = new ToggleButton<BoardButton>(Color.LIGHT_GRAY,
-                BoardButton.STAR_BUTTON, this.guiState);
+                BoardButton.STAR_BUTTON, this.guiModel);
         bArrow = new ToggleButton<BoardButton>(Color.LIGHT_GRAY,
-                BoardButton.ARROW_BUTTON, this.guiState);
+                BoardButton.ARROW_BUTTON, this.guiModel);
         
         buttons = new ArrayList<ToggleButton<BoardButton>>();
         

@@ -2,9 +2,19 @@ package robocrack.engine.board;
 
 import java.util.Observable;
 
-public class Board extends Observable
+import robocrack.engine.board.Cell.CellColor;
+
+public class BoardModel extends Observable
 {
-    private static final Direction ARROW_DEFAULT_DIRECTION = Direction.RIGHT;
+    public static enum ArrowDirection
+    {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
+    }
+    
+    private static final ArrowDirection ARROW_DEFAULT_DIRECTION = ArrowDirection.RIGHT;
     private static final Coordinate ARROW_DEFAULT_COORDINATE = Coordinate.make(0, 0);
     
     private final int width;
@@ -12,11 +22,11 @@ public class Board extends Observable
     
     private final Cell[][] board;
     
-    private Direction arrowDirection;
+    private ArrowDirection arrowDirection;
     private Cell currentCell;
     private int nrStars;
     
-    public Board(final int width, final int height)
+    public BoardModel(final int width, final int height)
     {
         this.width = width;
         this.height = height;
@@ -127,7 +137,7 @@ public class Board extends Observable
         return currentCell.coordinate;
     }
     
-    public Direction arrowDirection()
+    public ArrowDirection arrowDirection()
     {
         return arrowDirection;
     }
@@ -186,19 +196,19 @@ public class Board extends Observable
         switch(arrowDirection)
         {
         case LEFT:
-            arrowDirection = Direction.DOWN;
+            arrowDirection = ArrowDirection.DOWN;
             break;
             
         case RIGHT:
-            arrowDirection = Direction.UP;
+            arrowDirection = ArrowDirection.UP;
             break;
             
         case UP:
-            arrowDirection = Direction.LEFT;
+            arrowDirection = ArrowDirection.LEFT;
             break;
             
         case DOWN:
-            arrowDirection = Direction.RIGHT;
+            arrowDirection = ArrowDirection.RIGHT;
             break;
         }
         
@@ -211,19 +221,19 @@ public class Board extends Observable
         switch(arrowDirection)
         {
         case LEFT:
-            arrowDirection = Direction.UP;
+            arrowDirection = ArrowDirection.UP;
             break;
             
         case RIGHT:
-            arrowDirection = Direction.DOWN;
+            arrowDirection = ArrowDirection.DOWN;
             break;
             
         case UP:
-            arrowDirection = Direction.RIGHT;
+            arrowDirection = ArrowDirection.RIGHT;
             break;
             
         case DOWN:
-            arrowDirection = Direction.LEFT;
+            arrowDirection = ArrowDirection.LEFT;
             break;
         }
         

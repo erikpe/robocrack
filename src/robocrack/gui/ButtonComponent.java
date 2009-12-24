@@ -14,14 +14,14 @@ public class ButtonComponent<T extends Enum<?>> extends SquareComponent
     
     private final Color color;
     private final T buttonEnum;
-    private final GuiModel guiState;
+    private final GuiModel guiModel;
     
     ButtonComponent(final Color color, final T buttonEnum,
             final GuiModel guiState)
     {
         this.color = color;
         this.buttonEnum = buttonEnum;
-        this.guiState = guiState;
+        this.guiModel = guiState;
     }
     
     @Override
@@ -54,7 +54,7 @@ public class ButtonComponent<T extends Enum<?>> extends SquareComponent
     
     private void paintSelection(final Graphics g)
     {
-        if (!guiState.isSelected(buttonEnum))
+        if (!guiModel.isSelected(buttonEnum))
         {
             return;
         }
@@ -73,7 +73,7 @@ public class ButtonComponent<T extends Enum<?>> extends SquareComponent
     @Override
     void leftButtonPressed()
     {
-        guiState.selectButton(buttonEnum);
+        guiModel.selectButton(buttonEnum);
     }
     
     @Override

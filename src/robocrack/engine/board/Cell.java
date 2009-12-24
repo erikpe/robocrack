@@ -2,6 +2,14 @@ package robocrack.engine.board;
 
 public class Cell implements Position
 {
+    public static enum CellColor
+    {
+        NONE,
+        RED,
+        GREEN,
+        BLUE
+    }
+    
     private final int x;
     private final int y;
     

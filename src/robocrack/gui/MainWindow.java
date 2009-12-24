@@ -3,16 +3,16 @@ package robocrack.gui;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
-import robocrack.engine.board.Board;
+import robocrack.engine.board.BoardModel;
 
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame
 {
-    public MainWindow(final Board board)
+    public MainWindow(final BoardModel board)
     {
-        final GuiModel guiState = new GuiModel();
-        final BoardButtonPane buttonPane = new BoardButtonPane(guiState);
-        final BoardPane boardPane = new BoardPane(board, guiState);
+        final GuiModel guiModel = new GuiModel();
+        final BoardButtonPane buttonPane = new BoardButtonPane(guiModel);
+        final BoardPane boardPane = new BoardPane(board, guiModel);
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         

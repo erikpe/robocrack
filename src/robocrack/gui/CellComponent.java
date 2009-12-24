@@ -5,10 +5,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Polygon;
 
-import robocrack.engine.board.Board;
-import robocrack.engine.board.CellColor;
+import robocrack.engine.board.BoardModel;
 import robocrack.engine.board.Coordinate;
-import robocrack.engine.board.Direction;
+import robocrack.engine.board.BoardModel.ArrowDirection;
+import robocrack.engine.board.Cell.CellColor;
 
 @SuppressWarnings("serial")
 public class CellComponent extends SquareComponent
@@ -16,9 +16,9 @@ public class CellComponent extends SquareComponent
     final static int CELL_WIDTH = 21;
     final static int CELL_HEIGHT = CELL_WIDTH;
     
-    private final Board board;
+    private final BoardModel board;
     private final Coordinate coordinate;
-    private final GuiModel guiState;
+    private final GuiModel guiModel;
     
     private static final int X1 = CELL_WIDTH / 5;
     private static final int X2 = CELL_WIDTH / 2;
@@ -39,12 +39,12 @@ public class CellComponent extends SquareComponent
     private static final Polygon downArrow = new Polygon(
             new int[] { X1, X3, X2 }, new int[] { Y1, Y1, Y3 }, 3);
     
-    CellComponent(final Board board, final Coordinate coordinate,
+    CellComponent(final BoardModel board, final Coordinate coordinate,
             final GuiModel guiState)
     {
         this.board = board;
         this.coordinate = coordinate;
-        this.guiState = guiState;
+        this.guiModel = guiState;
         
         setSize(new Dimension(width(), height()));
     }
@@ -110,7 +110,7 @@ public class CellComponent extends SquareComponent
         g.drawPolygon(arrowPolygon);
     }
     
-    private Polygon getArrowPolygon(final Direction direction)
+    private Polygon getArrowPolygon(final ArrowDirection direction)
     {
         switch(direction)
         {
@@ -125,7 +125,7 @@ public class CellComponent extends SquareComponent
     @Override
     void leftButtonPressed()
     {
-        guiState.setStar(!board.hasStar(coordinate));
+        guiModel.setStar(!board.hasStar(coordinate));
         leftButtonAction();
     }
     
@@ -137,7 +137,7 @@ public class CellComponent extends SquareComponent
     
     private void leftButtonAction()
     {
-        switch(guiState.selectedBoardButton())
+        switch(guiModel.selectedBoardButton())
         {
         case RED_BUTTON:
             board.setColor(coordinate, CellColor.RED);
@@ -152,7 +152,7 @@ public class CellComponent extends SquareComponent
             break;
             
         case STAR_BUTTON:
-            board.setStar(coordinate, guiState.getStar());
+            board.setStar(coordinate, guiModel.getStar());
             break;
             
         case ARROW_BUTTON:
