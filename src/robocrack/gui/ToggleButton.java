@@ -12,25 +12,31 @@ import javax.swing.JToggleButton;
 public class ToggleButton<T extends Enum<?>> extends JToggleButton implements
         ActionListener, Observer
 {
-    private final Color color;
     private final T buttonEnum;
+    private final Color color;
     private final GuiModel guiModel;
     
-    ToggleButton(final Color color, final T buttonEnum, final GuiModel guiState)
+    ToggleButton(final T buttonEnum, final String label, final Color color,
+            final GuiModel guiModel)
     {
-        this.color = color;
-        this.buttonEnum = buttonEnum;
-        this.guiModel = guiState;
+        super(label);
         
+        this.buttonEnum = buttonEnum;
+        this.color = color;
+        this.guiModel = guiModel;
+
         initialize();
     }
     
     private void initialize()
     {
+        if (color != null)
+        {
+            setBackground(color);
+        }
+        
         guiModel.addObserver(this);
         addActionListener(this);
-        
-        setBackground(color);
     }
     
     @Override

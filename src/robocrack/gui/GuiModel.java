@@ -19,11 +19,18 @@ public class GuiModel extends Observable
         FORWARD_BUTTON,
         LEFT_BUTTON,
         RIGHT_BUTTON,
+        
         F1_BUTTON,
         F2_BUTTON,
         F3_BUTTON,
         F4_BUTTON,
-        F5_BUTTON
+        F5_BUTTON,
+        
+        RED_BUTTON,
+        GREEN_BUTTON,
+        BLUE_BUTTON,
+        NO_COLOR_BUTTON,
+        CLEAR_BUTTON
     }
     
     private boolean star;

@@ -7,7 +7,7 @@ public class Main
 {
     public static void main(final String[] argv)
     {
-        final BoardModel board = new BoardModel(20, 20);
+        final BoardModel board = new BoardModel(22, 15);
         final MainWindow window = new MainWindow(board);
         window.setVisible(true);
     }
