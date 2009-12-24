@@ -1,4 +1,4 @@
-package robotcrack.engine.board;
+package robocrack.engine.board;
 
 public enum Direction
 {

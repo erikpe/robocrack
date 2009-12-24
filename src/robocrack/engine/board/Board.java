@@ -1,4 +1,4 @@
-package robotcrack.engine.board;
+package robocrack.engine.board;
 
 import java.util.Observable;
 

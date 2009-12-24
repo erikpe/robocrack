@@ -1,9 +1,9 @@
-package robotcrack.engine.simulator;
+package robocrack.engine.simulator;
 
 import java.util.List;
 
-import robotcrack.engine.board.Board;
-import robotcrack.engine.board.Cell;
+import robocrack.engine.board.Board;
+import robocrack.engine.board.Cell;
 
 public class Simulator
 {

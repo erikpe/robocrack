@@ -1,4 +1,4 @@
-package robotcrack.gui;
+package robocrack.gui;
 
 import java.util.Observable;
 import java.util.Observer;

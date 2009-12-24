@@ -1,6 +1,6 @@
-package robotcrack.engine.board;
+package robocrack.engine.board;
 
-import robotcrack.util.WeakCache;
+import robocrack.util.WeakCache;
 
 public final class Coordinate
 {

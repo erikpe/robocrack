@@ -1,4 +1,4 @@
-package robotcrack.engine.simulator;
+package robocrack.engine.simulator;
 
 public class Instruction
 {

@@ -1,4 +1,4 @@
-package robotcrack.gui;
+package robocrack.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -9,7 +9,7 @@ import java.util.Observer;
 
 import javax.swing.JComponent;
 
-import robotcrack.gui.GuiState.BoardButton;
+import robocrack.gui.GuiState.BoardButton;
 
 @SuppressWarnings("serial")
 public class BoardButtonPaneOld extends JComponent implements Observer

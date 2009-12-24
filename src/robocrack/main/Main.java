@@ -1,7 +1,7 @@
-package robotcrack.main;
+package robocrack.main;
 
-import robotcrack.engine.board.Board;
-import robotcrack.gui.MainWindow;
+import robocrack.engine.board.Board;
+import robocrack.gui.MainWindow;
 
 public class Main
 {

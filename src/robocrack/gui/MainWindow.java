@@ -1,9 +1,9 @@
-package robotcrack.gui;
+package robocrack.gui;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
-import robotcrack.engine.board.Board;
+import robocrack.engine.board.Board;
 
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame

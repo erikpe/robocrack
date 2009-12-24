@@ -1,4 +1,4 @@
-package robotcrack.gui;
+package robocrack.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import robotcrack.gui.GuiState.BoardButton;
+import robocrack.gui.GuiState.BoardButton;
 
 public class BoardButtonPane extends JComponent
 {

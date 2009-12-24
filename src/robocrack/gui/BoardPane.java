@@ -1,4 +1,4 @@
-package robotcrack.gui;
+package robocrack.gui;
 
 import java.awt.Dimension;
 import java.util.Observable;
@@ -6,8 +6,8 @@ import java.util.Observer;
 
 import javax.swing.JComponent;
 
-import robotcrack.engine.board.Board;
-import robotcrack.engine.board.Coordinate;
+import robocrack.engine.board.Board;
+import robocrack.engine.board.Coordinate;
 
 @SuppressWarnings("serial")
 public class BoardPane extends JComponent implements Observer

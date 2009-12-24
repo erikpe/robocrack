@@ -1,14 +1,14 @@
-package robotcrack.gui;
+package robocrack.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Polygon;
 
-import robotcrack.engine.board.Board;
-import robotcrack.engine.board.CellColor;
-import robotcrack.engine.board.Coordinate;
-import robotcrack.engine.board.Direction;
+import robocrack.engine.board.Board;
+import robocrack.engine.board.CellColor;
+import robocrack.engine.board.Coordinate;
+import robocrack.engine.board.Direction;
 
 @SuppressWarnings("serial")
 public class CellComponent extends SquareComponent
