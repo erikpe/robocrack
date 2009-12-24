@@ -18,7 +18,7 @@ public class CellComponent extends SquareComponent
     
     private final Board board;
     private final Coordinate coordinate;
-    private final GuiState guiState;
+    private final GuiModel guiState;
     
     private static final int X1 = CELL_WIDTH / 5;
     private static final int X2 = CELL_WIDTH / 2;
@@ -40,7 +40,7 @@ public class CellComponent extends SquareComponent
             new int[] { X1, X3, X2 }, new int[] { Y1, Y1, Y3 }, 3);
     
     CellComponent(final Board board, final Coordinate coordinate,
-            final GuiState guiState)
+            final GuiModel guiState)
     {
         this.board = board;
         this.coordinate = coordinate;

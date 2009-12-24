@@ -14,10 +14,10 @@ public class ButtonComponent<T extends Enum<?>> extends SquareComponent
     
     private final Color color;
     private final T buttonEnum;
-    private final GuiState guiState;
+    private final GuiModel guiState;
     
     ButtonComponent(final Color color, final T buttonEnum,
-            final GuiState guiState)
+            final GuiModel guiState)
     {
         this.color = color;
         this.buttonEnum = buttonEnum;

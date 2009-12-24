@@ -3,7 +3,7 @@ package robocrack.gui;
 import java.util.Observable;
 import java.util.Observer;
 
-public class GuiState extends Observable
+public class GuiModel extends Observable
 {
     public static enum BoardButton
     {
@@ -30,7 +30,7 @@ public class GuiState extends Observable
     private BoardButton selectedBoardButton;
     private FunctionButton selectedFunctionButton;
     
-    GuiState()
+    GuiModel()
     {
         this.star = true;
         this.selectedBoardButton = BoardButton.RED_BUTTON;
@@ -88,7 +88,7 @@ public class GuiState extends Observable
     }
     
     @Override
-    public void addObserver(Observer observer)
+    public void addObserver(final Observer observer)
     {
         super.addObserver(observer);
         

@@ -7,15 +7,16 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import robocrack.gui.GuiState.BoardButton;
+import robocrack.gui.GuiModel.BoardButton;
 
+@SuppressWarnings("serial")
 public class BoardButtonPane extends JComponent
 {
     private static final int BUTTON_WIDTH = 30;
     private static final int BUTTON_HEIGHT = BUTTON_WIDTH;
     private static final int BUTTON_SPACING = 1;
     
-    private final GuiState guiState;
+    private final GuiModel guiState;
     
     private final ToggleButton<BoardButton> bRed;
     private final ToggleButton<BoardButton> bGreen;
@@ -25,17 +26,23 @@ public class BoardButtonPane extends JComponent
     
     private final List<ToggleButton<BoardButton>> buttons;
     
-    BoardButtonPane(final GuiState guiState)
+    BoardButtonPane(final GuiModel guiState)
     {
         this.guiState = guiState;
         
-        bRed = new ToggleButton<BoardButton>(Color.RED, BoardButton.RED_BUTTON, guiState);
-        bGreen = new ToggleButton<BoardButton>(Color.GREEN, BoardButton.GREEN_BUTTON, guiState);
-        bBlue = new ToggleButton<BoardButton>(Color.BLUE, BoardButton.BLUE_BUTTON, guiState);
-        bStar = new ToggleButton<BoardButton>(Color.LIGHT_GRAY, BoardButton.STAR_BUTTON, guiState);
-        bArrow = new ToggleButton<BoardButton>(Color.LIGHT_GRAY, BoardButton.ARROW_BUTTON, guiState);
+        bRed = new ToggleButton<BoardButton>(Color.RED,
+                BoardButton.RED_BUTTON, this.guiState);
+        bGreen = new ToggleButton<BoardButton>(Color.GREEN,
+                BoardButton.GREEN_BUTTON, this.guiState);
+        bBlue = new ToggleButton<BoardButton>(Color.BLUE,
+                BoardButton.BLUE_BUTTON, this.guiState);
+        bStar = new ToggleButton<BoardButton>(Color.LIGHT_GRAY,
+                BoardButton.STAR_BUTTON, this.guiState);
+        bArrow = new ToggleButton<BoardButton>(Color.LIGHT_GRAY,
+                BoardButton.ARROW_BUTTON, this.guiState);
         
         buttons = new ArrayList<ToggleButton<BoardButton>>();
+        
         buttons.add(bRed);
         buttons.add(bGreen);
         buttons.add(bBlue);

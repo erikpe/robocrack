@@ -14,9 +14,9 @@ public class ToggleButton<T extends Enum<?>> extends JToggleButton implements
 {
     private final Color color;
     private final T buttonEnum;
-    private final GuiState guiState;
+    private final GuiModel guiState;
     
-    ToggleButton(final Color color, final T buttonEnum, final GuiState guiState)
+    ToggleButton(final Color color, final T buttonEnum, final GuiModel guiState)
     {
         this.color = color;
         this.buttonEnum = buttonEnum;

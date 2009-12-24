@@ -10,7 +10,7 @@ public class MainWindow extends JFrame
 {
     public MainWindow(final Board board)
     {
-        final GuiState guiState = new GuiState();
+        final GuiModel guiState = new GuiModel();
         final BoardButtonPane buttonPane = new BoardButtonPane(guiState);
         final BoardPane boardPane = new BoardPane(board, guiState);
         

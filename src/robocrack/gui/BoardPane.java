@@ -15,11 +15,11 @@ public class BoardPane extends JComponent implements Observer
     private final static int CELL_SPACING = 1;
     
     private final Board board;
-    private final GuiState guiState;
+    private final GuiModel guiState;
     
     private final CellComponent[][] cells;
     
-    BoardPane(final Board board, final GuiState guiState)
+    BoardPane(final Board board, final GuiModel guiState)
     {
         this.board = board;
         this.guiState = guiState;
