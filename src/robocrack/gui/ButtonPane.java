@@ -26,6 +26,7 @@ public class ButtonPane<T extends Enum<?>> extends JComponent
     protected void addButton(final ToggleButton<T> button)
     {
         add(button);
+        
         final int xBounds = column * (buttonWidth + buttonSpacing);
         final int yBounds = row * (buttonHeight + buttonSpacing);
         button.setBounds(xBounds, yBounds, buttonWidth, buttonHeight);
@@ -34,7 +35,6 @@ public class ButtonPane<T extends Enum<?>> extends JComponent
                 - buttonSpacing;
         final int height = (row + 1) * (buttonHeight + buttonSpacing)
                 - buttonSpacing;
-        
         setPreferredSize(new Dimension(width, height));
         
         column++;

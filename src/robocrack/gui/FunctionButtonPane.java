@@ -12,7 +12,11 @@ public class FunctionButtonPane extends ButtonPane<FunctionButton>
     FunctionButtonPane(final GuiModel guiModel)
     {
         super(BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_SPACING);
-        
+        initialize(guiModel);
+    }
+    
+    private void initialize(final GuiModel guiModel)
+    {
         addButton(new ToggleButton<FunctionButton>(
                 FunctionButton.FORWARD_BUTTON, "F", null, guiModel));
         addButton(new ToggleButton<FunctionButton>(

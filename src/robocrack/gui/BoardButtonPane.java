@@ -12,7 +12,11 @@ public class BoardButtonPane extends ButtonPane<BoardButton>
     BoardButtonPane(final GuiModel guiModel)
     {
         super(BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_SPACING);
-        
+        initialize(guiModel);
+    }
+    
+    private void initialize(final GuiModel guiModel)
+    {
         addButton(new ToggleButton<BoardButton>(BoardButton.RED_BUTTON, "R",
                 null, guiModel));
         addButton(new ToggleButton<BoardButton>(BoardButton.GREEN_BUTTON, "G",

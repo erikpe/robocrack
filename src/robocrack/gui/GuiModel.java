@@ -40,8 +40,8 @@ public class GuiModel extends Observable
     GuiModel()
     {
         this.star = true;
-        this.selectedBoardButton = BoardButton.RED_BUTTON;
-        this.selectedFunctionButton = FunctionButton.FORWARD_BUTTON;
+        this.selectedBoardButton = BoardButton.values()[0];
+        this.selectedFunctionButton = FunctionButton.values()[0];
     }
     
     boolean isSelected(final Enum<?> buttonEnum)
