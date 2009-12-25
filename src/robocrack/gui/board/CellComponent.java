@@ -10,7 +10,7 @@ import robocrack.engine.board.CellPosition;
 import robocrack.engine.board.BoardModel.ArrowDirection;
 import robocrack.engine.board.Cell.CellColor;
 import robocrack.gui.GuiModel;
-import robocrack.gui.SquareComponent;
+import robocrack.gui.common.SquareComponent;
 
 @SuppressWarnings("serial")
 public class CellComponent extends SquareComponent

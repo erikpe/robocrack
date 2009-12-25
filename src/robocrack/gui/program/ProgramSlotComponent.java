@@ -1,7 +1,7 @@
 package robocrack.gui.program;
 
 import robocrack.engine.program.ProgramModel;
-import robocrack.gui.SquareComponent;
+import robocrack.gui.common.SquareComponent;
 
 @SuppressWarnings("serial")
 public class ProgramSlotComponent extends SquareComponent

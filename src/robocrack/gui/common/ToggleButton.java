@@ -1,4 +1,4 @@
-package robocrack.gui;
+package robocrack.gui.common;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -7,6 +7,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JToggleButton;
+
+import robocrack.gui.GuiModel;
 
 @SuppressWarnings("serial")
 public class ToggleButton<T extends Enum<?>> extends JToggleButton implements

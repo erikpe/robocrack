@@ -44,7 +44,7 @@ public class GuiModel extends Observable
         this.selectedFunctionButton = FunctionButton.values()[0];
     }
     
-    boolean isSelected(final Enum<?> buttonEnum)
+    public boolean isSelected(final Enum<?> buttonEnum)
     {
         if (buttonEnum instanceof BoardButton)
         {
@@ -59,7 +59,7 @@ public class GuiModel extends Observable
         return false;
     }
     
-    void selectButton(final Enum<?> buttonEnum)
+    public void selectButton(final Enum<?> buttonEnum)
     {
         if (buttonEnum instanceof BoardButton)
         {

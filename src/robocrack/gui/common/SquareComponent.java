@@ -1,4 +1,4 @@
-package robocrack.gui;
+package robocrack.gui.common;
 
 import java.awt.Color;
 import java.awt.Graphics;

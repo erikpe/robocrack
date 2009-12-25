@@ -1,8 +1,9 @@
-package robocrack.gui;
+package robocrack.gui.common;
 
 import java.awt.Dimension;
 
 import javax.swing.JComponent;
+
 
 @SuppressWarnings("serial")
 public class ButtonPane<T extends Enum<?>> extends JComponent

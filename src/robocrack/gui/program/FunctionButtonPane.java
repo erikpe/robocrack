@@ -1,9 +1,9 @@
 package robocrack.gui.program;
 
-import robocrack.gui.ButtonPane;
 import robocrack.gui.GuiModel;
-import robocrack.gui.ToggleButton;
 import robocrack.gui.GuiModel.FunctionButton;
+import robocrack.gui.common.ButtonPane;
+import robocrack.gui.common.ToggleButton;
 
 @SuppressWarnings("serial")
 public class FunctionButtonPane extends ButtonPane<FunctionButton>
