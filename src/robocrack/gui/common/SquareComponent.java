@@ -13,6 +13,7 @@ public abstract class SquareComponent extends JComponent implements
         MouseListener
 {
     private static final Color DEFAULT_COLOR = Color.LIGHT_GRAY;
+    private static final Color DEFAULT_BORDER_COLOR = Color.BLACK;
     
     private boolean isHighlighted = false;
     
@@ -30,6 +31,11 @@ public abstract class SquareComponent extends JComponent implements
         return DEFAULT_COLOR;
     }
     
+    protected Color getBorderColor()
+    {
+        return DEFAULT_BORDER_COLOR;
+    }
+    
     @Override
     public void paintComponent(final Graphics g)
     {
@@ -37,21 +43,31 @@ public abstract class SquareComponent extends JComponent implements
         paintBorder(g);
     }
     
+    protected Color highlightColor(final Color color)
+    {
+        int red = color.getRed();
+        int green = color.getGreen();
+        int blue = color.getBlue();
+        
+        red = red + 2 * (255 - red) / 3;
+        green = green + 2 * (255 - green) / 3;
+        blue = blue + 2 * (255 - blue) / 3;
+        
+        return new Color(red, green, blue);
+    }
+    
     protected void paintBackground(final Graphics g)
     {
         Color color = getBackgroundColor();
         
+        if (color == null)
+        {
+            return;
+        }
+        
         if (isHighlighted)
         {
-            int red = color.getRed();
-            int green = color.getGreen();
-            int blue = color.getBlue();
-            
-            red = red + 2 * (255 - red) / 3;
-            green = green + 2 * (255 - green) / 3;
-            blue = blue + 2 * (255 - blue) / 3;
-            
-            color = new Color(red, green, blue);
+            color = highlightColor(color);
         }
         
         g.setColor(color);
@@ -60,7 +76,7 @@ public abstract class SquareComponent extends JComponent implements
     
     protected void paintBorder(final Graphics g)
     {
-        g.setColor(Color.BLACK);
+        g.setColor(getBorderColor());
         g.drawRect(0, 0, width() - 1, height() - 1);
     }
     

@@ -8,7 +8,7 @@ import java.awt.Polygon;
 import robocrack.engine.board.BoardModel;
 import robocrack.engine.board.CellPosition;
 import robocrack.engine.board.BoardModel.ArrowDirection;
-import robocrack.engine.board.Cell.CellColor;
+import robocrack.engine.board.BoardModel.CellColor;
 import robocrack.gui.GuiModel;
 import robocrack.gui.common.SquareComponent;
 

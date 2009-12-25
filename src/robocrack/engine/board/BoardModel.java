@@ -2,10 +2,16 @@ package robocrack.engine.board;
 
 import java.util.Observable;
 
-import robocrack.engine.board.Cell.CellColor;
-
 public class BoardModel extends Observable
 {
+    public static enum CellColor
+    {
+        RED,
+        GREEN,
+        BLUE,
+        NONE
+    }
+
     public static enum ArrowDirection
     {
         LEFT,
@@ -13,7 +19,7 @@ public class BoardModel extends Observable
         UP,
         DOWN
     }
-
+    
     private static final ArrowDirection ARROW_DEFAULT_DIRECTION = ArrowDirection.RIGHT;
     private static final CellPosition ARROW_DEFAULT_POSITION = CellPosition.make(
             0, 0);

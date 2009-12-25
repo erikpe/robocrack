@@ -24,13 +24,12 @@ public class BoardPane extends JComponent implements Observer
     {
         this.board = board;
         this.guiModel = guiState;
-        
         this.cells = new CellComponent[board.width()][board.height()];
-        buildGrid();
-        board.addObserver(this);
+        
+        initialize();
     }
     
-    private void buildGrid()
+    private void initialize()
     {
         for (int y = 0; y < board.height(); ++y)
         {
@@ -57,6 +56,8 @@ public class BoardPane extends JComponent implements Observer
                 * (CellComponent.CELL_HEIGHT + CELL_SPACING) - CELL_SPACING;
         
         setPreferredSize(new Dimension(width, height));
+        
+        board.addObserver(this);
     }
     
     private CellComponent cellComponentAt(final CellPosition cellPosition)

@@ -26,6 +26,10 @@ public class GuiModel extends Observable
         F4_BUTTON,
         F5_BUTTON,
         
+        PAINT_RED_BUTTON,
+        PAINT_GREEN_BUTTON,
+        PAINT_BLUE_BUTTON,
+        
         RED_BUTTON,
         GREEN_BUTTON,
         BLUE_BUTTON,

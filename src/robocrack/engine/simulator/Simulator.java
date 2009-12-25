@@ -16,7 +16,7 @@ public class Simulator
     private BoardModel board;
     
     public Simulator(List<List<Instruction>> program)
-    {
+    { 
         this.f1 = program.get(0);
         this.f2 = program.get(1);
         this.f3 = program.get(2);

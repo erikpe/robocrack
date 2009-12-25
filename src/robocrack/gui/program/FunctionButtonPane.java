@@ -43,6 +43,15 @@ public class FunctionButtonPane extends ButtonPane<FunctionButton>
         newRow();
         
         addButton(new ToggleButton<FunctionButton>(
+                FunctionButton.PAINT_RED_BUTTON, "PR", null, guiModel));
+        addButton(new ToggleButton<FunctionButton>(
+                FunctionButton.PAINT_GREEN_BUTTON, "PG", null, guiModel));
+        addButton(new ToggleButton<FunctionButton>(
+                FunctionButton.PAINT_BLUE_BUTTON, "PB", null, guiModel));
+
+        newRow();
+        
+        addButton(new ToggleButton<FunctionButton>(
                 FunctionButton.RED_BUTTON, "R", null, guiModel));
         addButton(new ToggleButton<FunctionButton>(
                 FunctionButton.GREEN_BUTTON, "G", null, guiModel));

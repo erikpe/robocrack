@@ -32,13 +32,11 @@ public class ProgramModel extends Observable
     private static final OpCode DEFAULT_OPCODE = OpCode.NOP;
     private static final Condition DEFAULT_CONDITION = Condition.ON_ALL;
     
-    private int numFunctions;
     private final int[] functionLength;
     private final Instruction[][] program;
     
     public ProgramModel()
     {
-        this.numFunctions = 1;
         this.functionLength = new int[MAX_FUNCTIONS];
         this.program = new Instruction[MAX_FUNCTIONS][];
         
@@ -49,7 +47,7 @@ public class ProgramModel extends Observable
     {
         for (int i = 0; i < MAX_FUNCTIONS; ++i)
         {
-            functionLength[i] = 1;
+            functionLength[i] = 0;
             program[i] = new Instruction[MAX_FUNCTION_LENGTH];
 
             for (int j = 0; j < MAX_FUNCTION_LENGTH; ++j)
@@ -58,20 +56,57 @@ public class ProgramModel extends Observable
                         DEFAULT_CONDITION);
             }
         }
+        
+        setFunctionLength(1, 3);
+        setFunctionLength(2, 3);
     }
     
-    public int getNumFunctions()
+    public int getMaxFunctions()
     {
-        return numFunctions;
+        return MAX_FUNCTIONS;
     }
     
-    public int getFunctionLength(final int index)
+    public int getMaxFunctionLength()
     {
-        return functionLength[index];
+        return MAX_FUNCTION_LENGTH;
     }
     
-    public boolean isActive(final int function, final int slot)
+    public int getFunctionLength(final int function)
     {
-        return function <= numFunctions && slot < functionLength[function];
+        return functionLength[function - 1];
+    }
+    
+    public void setFunctionLength(final int function, int length)
+    {
+        if (function > getMaxFunctions() || function <= 0)
+        {
+            return;
+        }
+        
+        length = Math.max(0, length);
+        length = Math.min(getMaxFunctionLength(), length);
+        
+        if (function == 1)
+        {
+            length = Math.max(1, length);
+        }
+        else if (getFunctionLength(function - 1) == 0)
+        {
+            length = 0;
+        }
+        else if (function < getMaxFunctions() && getFunctionLength(function + 1) > 0)
+        {
+            length = Math.max(1, length);
+        }
+        
+        functionLength[function - 1] = length;
+        
+        setChanged();
+        notifyObservers();
+    }
+    
+    public boolean isActive(final InstructionPosition position)
+    {
+        return position.slot < getFunctionLength(position.function);
     }
 }

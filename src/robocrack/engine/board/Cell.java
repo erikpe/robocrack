@@ -1,15 +1,9 @@
 package robocrack.engine.board;
 
+import robocrack.engine.board.BoardModel.CellColor;
+
 public class Cell
 {
-    public static enum CellColor
-    {
-        NONE,
-        RED,
-        GREEN,
-        BLUE
-    }
-    
     final int x;
     final int y;
     
