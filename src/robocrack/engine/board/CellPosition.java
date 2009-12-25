@@ -2,28 +2,28 @@ package robocrack.engine.board;
 
 import robocrack.util.WeakCache;
 
-public final class Coordinate
+public final class CellPosition
 {
-    private final static WeakCache<Coordinate> cache =
-        new WeakCache<Coordinate>();
+    private final static WeakCache<CellPosition> cache =
+        new WeakCache<CellPosition>();
     
     public final int x;
     public final int y;
     
-    private Coordinate(final int x, final int y)
+    private CellPosition(final int x, final int y)
     {
         this.x = x;
         this.y = y;
     }
     
-    public static Coordinate make(final int x, final int y)
+    public static CellPosition make(final int x, final int y)
     {
         if (x < 0 || y < 0)
         {
             throw new IndexOutOfBoundsException();
         }
         
-        return cache.get(new Coordinate(x, y));
+        return cache.get(new CellPosition(x, y));
     }
     
     @Override
@@ -45,12 +45,12 @@ public final class Coordinate
             return false;
         }
         
-        if (!(other instanceof Coordinate))
+        if (!(other instanceof CellPosition))
         {
             return false;
         }
         
-        final Coordinate otherCoordinate = (Coordinate) other;
-        return x == otherCoordinate.x && y == otherCoordinate.y;
+        final CellPosition otherPosition = (CellPosition) other;
+        return x == otherPosition.x && y == otherPosition.y;
     }
 }

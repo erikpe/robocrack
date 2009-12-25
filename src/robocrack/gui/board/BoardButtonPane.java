@@ -1,5 +1,8 @@
-package robocrack.gui;
+package robocrack.gui.board;
 
+import robocrack.gui.ButtonPane;
+import robocrack.gui.GuiModel;
+import robocrack.gui.ToggleButton;
 import robocrack.gui.GuiModel.BoardButton;
 
 @SuppressWarnings("serial")
@@ -9,7 +12,7 @@ public class BoardButtonPane extends ButtonPane<BoardButton>
     private static final int BUTTON_HEIGHT = 30;
     private static final int BUTTON_SPACING = 3;
     
-    BoardButtonPane(final GuiModel guiModel)
+    public BoardButtonPane(final GuiModel guiModel)
     {
         super(BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_SPACING);
         initialize(guiModel);

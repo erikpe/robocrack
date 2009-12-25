@@ -1,5 +1,8 @@
-package robocrack.gui;
+package robocrack.gui.program;
 
+import robocrack.gui.ButtonPane;
+import robocrack.gui.GuiModel;
+import robocrack.gui.ToggleButton;
 import robocrack.gui.GuiModel.FunctionButton;
 
 @SuppressWarnings("serial")
@@ -9,7 +12,7 @@ public class FunctionButtonPane extends ButtonPane<FunctionButton>
     private static final int BUTTON_HEIGHT = 30;
     private static final int BUTTON_SPACING = 3;
     
-    FunctionButtonPane(final GuiModel guiModel)
+    public FunctionButtonPane(final GuiModel guiModel)
     {
         super(BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_SPACING);
         initialize(guiModel);

@@ -12,18 +12,23 @@ import javax.swing.JComponent;
 public abstract class SquareComponent extends JComponent implements
         MouseListener
 {
+    private static final Color DEFAULT_COLOR = Color.LIGHT_GRAY;
+    
     private boolean isHighlighted = false;
     
-    SquareComponent()
+    public SquareComponent()
     {
         addMouseListener(this);
     }
     
-    protected abstract Color getBackgroundColor();
-    
     protected abstract int width();
     
     protected abstract int height();
+    
+    protected Color getBackgroundColor()
+    {
+        return DEFAULT_COLOR;
+    }
     
     @Override
     public void paintComponent(final Graphics g)
@@ -59,21 +64,21 @@ public abstract class SquareComponent extends JComponent implements
         g.drawRect(0, 0, width() - 1, height() - 1);
     }
     
-    void leftButtonPressed() { }
+    protected void leftButtonPressed() { }
     
-    void leftButtonReleased() { }
+    protected void leftButtonReleased() { }
     
-    void leftButtonEntered() { }
+    protected void leftButtonEntered() { }
     
-    void leftButtonExited() { }
+    protected void leftButtonExited() { }
     
-    void rightButtonPressed() { }
+    protected void rightButtonPressed() { }
     
-    void rightButtonReleased() { }
+    protected void rightButtonReleased() { }
     
-    void rightButtonEntered() { }
+    protected void rightButtonEntered() { }
     
-    void rightButtonExited() { }
+    protected void rightButtonExited() { }
     
     @Override
     public void mouseClicked(final MouseEvent e) { }

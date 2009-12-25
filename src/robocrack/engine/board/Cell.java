@@ -1,6 +1,6 @@
 package robocrack.engine.board;
 
-public class Cell implements Position
+public class Cell
 {
     public static enum CellColor
     {
@@ -10,8 +10,8 @@ public class Cell implements Position
         BLUE
     }
     
-    private final int x;
-    private final int y;
+    final int x;
+    final int y;
     
     Cell leftNeighbour = null;
     Cell rightNeighbour = null;
@@ -20,32 +20,20 @@ public class Cell implements Position
     
     CellColor color;
     boolean hasStar;
-    final Coordinate coordinate;
+    final CellPosition cellPosition;
     
-    Cell(final Coordinate coordinate)
+    Cell(final CellPosition cellPosition)
     {
-        this.x = coordinate.x;
-        this.y = coordinate.y;
+        this.x = cellPosition.x;
+        this.y = cellPosition.y;
         this.color = CellColor.NONE;
         this.hasStar = false;
-        this.coordinate = coordinate;
+        this.cellPosition = cellPosition;
     }
     
-    @Override
-    public int x()
+    public CellPosition getCoordinate()
     {
-        return x;
-    }
-    
-    @Override
-    public int y()
-    {
-        return y;
-    }
-    
-    public Coordinate getCoordinate()
-    {
-        return coordinate;
+        return cellPosition;
     }
     
     public void setColor(final CellColor color)
@@ -66,6 +54,6 @@ public class Cell implements Position
     @Override
     public String toString()
     {
-        return "[" + coordinate + ", " + color + (hasStar ? ", [X]" : "") + "]";
+        return "[" + cellPosition + ", " + color + (hasStar ? ", [X]" : "") + "]";
     }
 }

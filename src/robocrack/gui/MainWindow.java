@@ -4,6 +4,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
 import robocrack.engine.board.BoardModel;
+import robocrack.gui.board.BoardButtonPane;
+import robocrack.gui.board.BoardPane;
+import robocrack.gui.program.FunctionButtonPane;
 
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame

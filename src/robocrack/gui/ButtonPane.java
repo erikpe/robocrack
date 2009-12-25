@@ -14,12 +14,13 @@ public class ButtonPane<T extends Enum<?>> extends JComponent
     private int row = 0;
     private int column = 0;
     
-    ButtonPane(final int buttonWidth, final int buttonHeight, final int buttonSpacing)
+    public ButtonPane(final int buttonWidth, final int buttonHeight,
+            final int buttonSpacing)
     {
         this.buttonWidth = buttonWidth;
         this.buttonHeight = buttonHeight;
         this.buttonSpacing = buttonSpacing;
-        
+
         setPreferredSize(new Dimension(0, 0));
     }
     

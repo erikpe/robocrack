@@ -1,6 +1,8 @@
 package robocrack.engine.program;
 
-public class ProgramModel
+import java.util.Observable;
+
+public class ProgramModel extends Observable
 {
     public static enum OpCode
     {

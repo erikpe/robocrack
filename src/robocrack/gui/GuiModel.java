@@ -74,22 +74,22 @@ public class GuiModel extends Observable
         notifyObservers();
     }
     
-    BoardButton selectedBoardButton()
+    public BoardButton selectedBoardButton()
     {
         return selectedBoardButton;
     }
     
-    FunctionButton selectedFunctionButton()
+    public FunctionButton selectedFunctionButton()
     {
         return selectedFunctionButton;
     }
     
-    void setStar(final boolean star)
+    public void setStar(final boolean star)
     {
         this.star = star;
     }
     
-    boolean getStar()
+    public boolean getStar()
     {
         return star;
     }

@@ -1,4 +1,4 @@
-package robocrack.gui;
+package robocrack.gui.board;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -6,9 +6,11 @@ import java.awt.Graphics;
 import java.awt.Polygon;
 
 import robocrack.engine.board.BoardModel;
-import robocrack.engine.board.Coordinate;
+import robocrack.engine.board.CellPosition;
 import robocrack.engine.board.BoardModel.ArrowDirection;
 import robocrack.engine.board.Cell.CellColor;
+import robocrack.gui.GuiModel;
+import robocrack.gui.SquareComponent;
 
 @SuppressWarnings("serial")
 public class CellComponent extends SquareComponent
@@ -17,7 +19,7 @@ public class CellComponent extends SquareComponent
     final static int CELL_HEIGHT = CELL_WIDTH;
     
     private final BoardModel board;
-    private final Coordinate coordinate;
+    private final CellPosition cellPosition;
     private final GuiModel guiModel;
     
     private static final int X1 = CELL_WIDTH / 5;
@@ -39,11 +41,11 @@ public class CellComponent extends SquareComponent
     private static final Polygon downArrow = new Polygon(
             new int[] { X1, X3, X2 }, new int[] { Y1, Y1, Y3 }, 3);
     
-    CellComponent(final BoardModel board, final Coordinate coordinate,
+    CellComponent(final BoardModel board, final CellPosition cellPosition,
             final GuiModel guiState)
     {
         this.board = board;
-        this.coordinate = coordinate;
+        this.cellPosition = cellPosition;
         this.guiModel = guiState;
         
         setSize(new Dimension(width(), height()));
@@ -64,7 +66,7 @@ public class CellComponent extends SquareComponent
     @Override
     protected Color getBackgroundColor()
     {
-        switch(board.getColor(coordinate))
+        switch(board.getColor(cellPosition))
         {
         case NONE: return Color.LIGHT_GRAY;
         case RED: return Color.RED;
@@ -84,7 +86,7 @@ public class CellComponent extends SquareComponent
     
     private void paintStar(final Graphics g)
     {
-        if (!board.hasStar(coordinate))
+        if (!board.hasStar(cellPosition))
         {
             return;
         }
@@ -97,7 +99,7 @@ public class CellComponent extends SquareComponent
     
     private void paintArrow(final Graphics g)
     {
-        if (!coordinate.equals(board.arrowCoordinate()))
+        if (!cellPosition.equals(board.arrowCoordinate()))
         {
             return;
         }
@@ -123,14 +125,14 @@ public class CellComponent extends SquareComponent
     }
     
     @Override
-    void leftButtonPressed()
+    protected void leftButtonPressed()
     {
-        guiModel.setStar(!board.hasStar(coordinate));
+        guiModel.setStar(!board.hasStar(cellPosition));
         leftButtonAction();
     }
     
     @Override
-    void leftButtonEntered()
+    protected void leftButtonEntered()
     {
         leftButtonAction();
     }
@@ -140,19 +142,19 @@ public class CellComponent extends SquareComponent
         switch(guiModel.selectedBoardButton())
         {
         case RED_BUTTON:
-            board.setColor(coordinate, CellColor.RED);
+            board.setColor(cellPosition, CellColor.RED);
             break;
             
         case GREEN_BUTTON:
-            board.setColor(coordinate, CellColor.GREEN);
+            board.setColor(cellPosition, CellColor.GREEN);
             break;
             
         case BLUE_BUTTON:
-            board.setColor(coordinate, CellColor.BLUE);
+            board.setColor(cellPosition, CellColor.BLUE);
             break;
             
         case STAR_BUTTON:
-            board.setStar(coordinate, guiModel.getStar());
+            board.setStar(cellPosition, guiModel.getStar());
             break;
             
         case ARROW_BUTTON:
@@ -162,31 +164,31 @@ public class CellComponent extends SquareComponent
     }
     
     @Override
-    void rightButtonPressed()
+    protected void rightButtonPressed()
     {
        rightButtonAction();
     }
     
     @Override
-    void rightButtonEntered()
+    protected void rightButtonEntered()
     {
         rightButtonAction();
     }
     
     private void rightButtonAction()
     {
-        board.setColor(coordinate, CellColor.NONE);
+        board.setColor(cellPosition, CellColor.NONE);
     }
     
     private void updateArrow()
     {
-        if (coordinate.equals(board.arrowCoordinate()))
+        if (cellPosition.equals(board.arrowCoordinate()))
         {
             board.turnRight();
         }
         else
         {
-            board.setArrow(coordinate);
+            board.setArrow(cellPosition);
         }
     }
 }

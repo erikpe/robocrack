@@ -4,13 +4,18 @@ import java.util.Observable;
 
 import robocrack.engine.board.Cell.CellColor;
 
-public class BoardModel extends Observable {
-    public static enum ArrowDirection {
-        LEFT, RIGHT, UP, DOWN
+public class BoardModel extends Observable
+{
+    public static enum ArrowDirection
+    {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
     }
 
     private static final ArrowDirection ARROW_DEFAULT_DIRECTION = ArrowDirection.RIGHT;
-    private static final Coordinate ARROW_DEFAULT_COORDINATE = Coordinate.make(
+    private static final CellPosition ARROW_DEFAULT_POSITION = CellPosition.make(
             0, 0);
 
     private final int width;
@@ -22,27 +27,33 @@ public class BoardModel extends Observable {
     private Cell currentCell;
     private int nrStars;
 
-    public BoardModel(final int width, final int height) {
+    public BoardModel(final int width, final int height)
+    {
         this.width = width;
         this.height = height;
         this.board = makeBoard(width, height);
         this.arrowDirection = ARROW_DEFAULT_DIRECTION;
-        this.currentCell = cellAt(ARROW_DEFAULT_COORDINATE);
+        this.currentCell = cellAt(ARROW_DEFAULT_POSITION);
     }
 
-    private static Cell[][] makeBoard(final int width, final int height) {
+    private static Cell[][] makeBoard(final int width, final int height)
+    {
         final Cell[][] tmpBoard = new Cell[width][];
 
-        for (int x = 0; x < width; ++x) {
+        for (int x = 0; x < width; ++x)
+        {
             tmpBoard[x] = new Cell[height];
 
-            for (int y = 0; y < height; ++y) {
-                tmpBoard[x][y] = new Cell(Coordinate.make(x, y));
+            for (int y = 0; y < height; ++y)
+            {
+                tmpBoard[x][y] = new Cell(CellPosition.make(x, y));
             }
         }
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x)
+        {
+            for (int y = 0; y < height; ++y)
+            {
                 if (x > 0) {
                     tmpBoard[x][y].leftNeighbour = tmpBoard[x - 1][y];
                 }
@@ -64,61 +75,73 @@ public class BoardModel extends Observable {
         return tmpBoard;
     }
 
-    private Cell cellAt(final Coordinate coord) {
+    private Cell cellAt(final CellPosition coord)
+    {
         return board[coord.x][coord.y];
     }
 
-    public int width() {
+    public int width()
+    {
         return width;
     }
 
-    public int height() {
+    public int height()
+    {
         return height;
     }
 
-    public Cell getCurrentCell() {
+    public Cell getCurrentCell()
+    {
         return currentCell;
     }
 
-    public boolean hasStar(final Coordinate coordinate) {
-        return cellAt(coordinate).hasStar;
+    public boolean hasStar(final CellPosition cellPosition)
+    {
+        return cellAt(cellPosition).hasStar;
     }
 
-    public void setStar(final Coordinate coordinate, final boolean star) {
-        if (cellAt(coordinate).getColor() != CellColor.NONE) {
-            cellAt(coordinate).hasStar = star;
+    public void setStar(final CellPosition cellPosition, final boolean star)
+    {
+        if (cellAt(cellPosition).getColor() != CellColor.NONE)
+        {
+            cellAt(cellPosition).hasStar = star;
         }
 
         setChanged();
-        notifyObservers(coordinate);
+        notifyObservers(cellPosition);
     }
 
-    public void setColor(final Coordinate coordinate, final CellColor color) {
-        cellAt(coordinate).setColor(color);
+    public void setColor(final CellPosition cellPosition, final CellColor color)
+    {
+        cellAt(cellPosition).setColor(color);
 
         if (color == CellColor.NONE) {
-            cellAt(coordinate).hasStar = false;
+            cellAt(cellPosition).hasStar = false;
         }
 
         setChanged();
-        notifyObservers(coordinate);
+        notifyObservers(cellPosition);
     }
 
-    public CellColor getColor(final Coordinate coordinate) {
-        return cellAt(coordinate).color;
+    public CellColor getColor(final CellPosition cellPosition)
+    {
+        return cellAt(cellPosition).color;
     }
 
-    public Coordinate arrowCoordinate() {
-        return currentCell.coordinate;
+    public CellPosition arrowCoordinate()
+    {
+        return currentCell.cellPosition;
     }
 
-    public ArrowDirection arrowDirection() {
+    public ArrowDirection arrowDirection()
+    {
         return arrowDirection;
     }
 
-    public void setArrow(final Coordinate coordinate) {
-        final Coordinate oldCoordinate = arrowCoordinate();
-        currentCell = cellAt(coordinate);
+    public void setArrow(final CellPosition cellPosition)
+    {
+        final CellPosition oldCoordinate = arrowCoordinate();
+        currentCell = cellAt(cellPosition);
 
         setChanged();
         notifyObservers(oldCoordinate);
@@ -126,8 +149,10 @@ public class BoardModel extends Observable {
         notifyObservers(arrowCoordinate());
     }
 
-    public void goForward() {
-        switch (arrowDirection) {
+    public void goForward()
+    {
+        switch (arrowDirection)
+        {
         case LEFT:
             currentCell = currentCell.leftNeighbour;
             break;
@@ -145,22 +170,27 @@ public class BoardModel extends Observable {
             break;
         }
 
-        if (currentCell == null || currentCell.color == CellColor.NONE) {
+        if (currentCell == null || currentCell.color == CellColor.NONE)
+        {
             throw new RuntimeException("Outside of the board");
         }
 
-        if (currentCell.hasStar) {
+        if (currentCell.hasStar)
+        {
             currentCell.hasStar = false;
             nrStars--;
 
-            if (nrStars == 0) {
+            if (nrStars == 0)
+            {
                 throw new RuntimeException("Finished!");
             }
         }
     }
 
-    public void turnLeft() {
-        switch (arrowDirection) {
+    public void turnLeft()
+    {
+        switch (arrowDirection)
+        {
         case LEFT:
             arrowDirection = ArrowDirection.DOWN;
             break;
@@ -179,11 +209,13 @@ public class BoardModel extends Observable {
         }
 
         setChanged();
-        notifyObservers(currentCell.coordinate);
+        notifyObservers(currentCell.cellPosition);
     }
 
-    public void turnRight() {
-        switch (arrowDirection) {
+    public void turnRight()
+    {
+        switch (arrowDirection)
+        {
         case LEFT:
             arrowDirection = ArrowDirection.UP;
             break;
@@ -202,17 +234,17 @@ public class BoardModel extends Observable {
         }
 
         setChanged();
-        notifyObservers(currentCell.coordinate);
+        notifyObservers(currentCell.cellPosition);
     }
 
-    public void clear() {
-        for (int y = 0; y < height(); ++y) {
-            for (int x = 0; x < width(); ++x) {
-                setColor(Coordinate.make(x, y), CellColor.NONE);
+    public void clear()
+    {
+        for (int y = 0; y < height(); ++y)
+        {
+            for (int x = 0; x < width(); ++x)
+            {
+                setColor(CellPosition.make(x, y), CellColor.NONE);
             }
         }
-
-        arrowDirection = ARROW_DEFAULT_DIRECTION;
-        setArrow(ARROW_DEFAULT_COORDINATE);
     }
 }

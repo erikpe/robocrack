@@ -1,4 +1,4 @@
-package robocrack.gui;
+package robocrack.gui.board;
 
 import java.awt.Dimension;
 import java.util.Observable;
@@ -7,7 +7,8 @@ import java.util.Observer;
 import javax.swing.JComponent;
 
 import robocrack.engine.board.BoardModel;
-import robocrack.engine.board.Coordinate;
+import robocrack.engine.board.CellPosition;
+import robocrack.gui.GuiModel;
 
 @SuppressWarnings("serial")
 public class BoardPane extends JComponent implements Observer
@@ -19,7 +20,7 @@ public class BoardPane extends JComponent implements Observer
     
     private final CellComponent[][] cells;
     
-    BoardPane(final BoardModel board, final GuiModel guiState)
+    public BoardPane(final BoardModel board, final GuiModel guiState)
     {
         this.board = board;
         this.guiModel = guiState;
@@ -35,9 +36,8 @@ public class BoardPane extends JComponent implements Observer
         {
             for (int x = 0; x < board.width(); ++x)
             {
-                final Coordinate coordinate = Coordinate.make(x, y);
-                CellComponent cc = new CellComponent(board, coordinate,
-                        guiModel);
+                final CellPosition cellPosition = CellPosition.make(x, y);
+                CellComponent cc = new CellComponent(board, cellPosition, guiModel);
                 cells[x][y] = cc;
                 add(cc);
                 
@@ -59,17 +59,17 @@ public class BoardPane extends JComponent implements Observer
         setPreferredSize(new Dimension(width, height));
     }
     
-    private CellComponent cellComponentAt(final Coordinate coordinate)
+    private CellComponent cellComponentAt(final CellPosition cellPosition)
     {
-        return cells[coordinate.x][coordinate.y];
+        return cells[cellPosition.x][cellPosition.y];
     }
     
     @Override
     public void update(final Observable observable, final Object arg)
     {
-        if (arg instanceof Coordinate)
+        if (arg instanceof CellPosition)
         {
-            cellComponentAt((Coordinate) arg).repaint();
+            cellComponentAt((CellPosition) arg).repaint();
         }
     }
 }
