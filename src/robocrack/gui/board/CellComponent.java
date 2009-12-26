@@ -11,6 +11,8 @@ import robocrack.engine.board.BoardModel.ArrowDirection;
 import robocrack.engine.board.BoardModel.CellColor;
 import robocrack.gui.GuiModel;
 import robocrack.gui.common.SquareComponent;
+import robocrack.util.PolygonHelper;
+import robocrack.util.PolygonHelper.Type;
 
 @SuppressWarnings("serial")
 public class CellComponent extends SquareComponent
@@ -21,25 +23,6 @@ public class CellComponent extends SquareComponent
     private final BoardModel board;
     private final CellPosition cellPosition;
     private final GuiModel guiModel;
-    
-    private static final int X1 = CELL_WIDTH / 5;
-    private static final int X2 = CELL_WIDTH / 2;
-    private static final int X3 = CELL_WIDTH - CELL_WIDTH / 5;
-    private static final int Y1 = CELL_HEIGHT / 5;
-    private static final int Y2 = CELL_HEIGHT / 2;
-    private static final int Y3 = CELL_HEIGHT - CELL_HEIGHT / 5;
-    
-    private static final Polygon leftArrow = new Polygon(
-            new int[] { X3, X3, X1 }, new int[] { Y1, Y3, Y2 }, 3);
-    
-    private static final Polygon rightArrow = new Polygon(
-            new int[] { X1, X1, X3 }, new int[] { Y3, Y1, Y2 }, 3);
-    
-    private static final Polygon upArrow = new Polygon(
-            new int[] { X3, X1, X2 }, new int[] { Y3, Y3, Y1 }, 3);
-    
-    private static final Polygon downArrow = new Polygon(
-            new int[] { X1, X3, X2 }, new int[] { Y1, Y1, Y3 }, 3);
     
     CellComponent(final BoardModel board, final CellPosition cellPosition,
             final GuiModel guiState)
@@ -114,13 +97,18 @@ public class CellComponent extends SquareComponent
     
     private Polygon getArrowPolygon(final ArrowDirection direction)
     {
-        switch(direction)
+        switch (direction)
         {
-        case LEFT: return leftArrow;
-        case RIGHT: return rightArrow;
-        case UP: return upArrow;
-        case DOWN: return downArrow;
-        default: return null;
+        case LEFT:
+            return PolygonHelper.makePolygon(Type.LEFT_ARROW, width(), height());
+        case RIGHT:
+            return PolygonHelper.makePolygon(Type.RIGHT_ARROW, width(), height());
+        case UP:
+            return PolygonHelper.makePolygon(Type.UP_ARROW, width(), height());
+        case DOWN:
+            return PolygonHelper.makePolygon(Type.DOWN_ARROW, width(), height());
+        default:
+            return null;
         }
     }
     

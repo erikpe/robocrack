@@ -12,8 +12,8 @@ public class Main
         final ProgramModel programModel = new ProgramModel();
         
         final MainWindow window = new MainWindow(boardModel, programModel);
-        final MainWindow window2 = new MainWindow(boardModel, programModel);
+        //final MainWindow window2 = new MainWindow(boardModel, programModel);
         window.setVisible(true);
-        window2.setVisible(true);
+        //window2.setVisible(true);
     }
 }

@@ -2,6 +2,7 @@ package robocrack.gui.program;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Polygon;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -14,12 +15,14 @@ import robocrack.engine.program.ProgramModel.OpCode;
 import robocrack.gui.GuiModel;
 import robocrack.gui.GuiModel.FunctionButton;
 import robocrack.gui.common.SquareComponent;
+import robocrack.util.PolygonHelper;
+import robocrack.util.PolygonHelper.Type;
 
 @SuppressWarnings("serial")
 public class InstructionSlotComponent extends SquareComponent implements
         Observer
 {
-    static final int WIDTH = 30;
+    static final int WIDTH = 33;
     static final int HEIGHT = WIDTH;
     
     final InstructionPosition position;
@@ -80,6 +83,8 @@ public class InstructionSlotComponent extends SquareComponent implements
     {
         super.paintComponent(g);
         paintLabel();
+        paintBlob(g);
+        paintArrow(g);
     }
     
     private void paintLabel()
@@ -103,6 +108,68 @@ public class InstructionSlotComponent extends SquareComponent implements
         
         label.setBounds(xBounds, yBounds, labelWidth, labelHeight);
         label.setVisible(true);
+    }
+    
+    private void paintBlob(final Graphics g)
+    {
+        final OpCode opCode = programModel.getOpCode(position);
+        final Color blobColor = blobColorFromOpCode(opCode);
+        
+        if (blobColor == null)
+        {
+            return;
+        }
+        
+        final int xBounds = width() / 4;
+        final int yBounds = height() / 4;
+        final int width = width() / 2;
+        final int height = height() / 2;
+        
+        g.setColor(blobColor);
+        g.fillOval(xBounds, yBounds, width, height);
+        g.setColor(Color.BLACK);
+        g.drawOval(xBounds, yBounds, width, height);
+    }
+    
+    private void paintArrow(final Graphics g)
+    {
+        final OpCode opCode = programModel.getOpCode(position);
+        final Polygon arrow = getPolygonFromOpCode(opCode);
+        
+        if (arrow == null)
+        {
+            return;
+        }
+        
+        g.setColor(Color.WHITE);
+        g.fillPolygon(arrow);
+        g.setColor(Color.BLACK);
+        g.drawPolygon(arrow);
+    }
+    
+    private Polygon getPolygonFromOpCode(final OpCode opCode)
+    {
+        switch (opCode)
+        {
+        case GO_FORWARD:
+            return PolygonHelper.makePolygon(Type.GO_FORWARD, width(), height());
+        case TURN_LEFT:
+            return PolygonHelper.makePolygon(Type.TURN_LEFT, width(), height());
+        case TURN_RIGHT:
+            return PolygonHelper.makePolygon(Type.TURN_RIGHT, width(), height());
+        default: return null;
+        }
+    }
+    
+    private Color blobColorFromOpCode(final OpCode opCode)
+    {
+        switch (opCode)
+        {
+        case PAINT_RED: return Color.RED;
+        case PAINT_GREEN: return Color.GREEN;
+        case PAINT_BLUE: return Color.BLUE;
+        default: return null;
+        }
     }
     
     private String textFromOpCode(final OpCode opCode)
