@@ -55,18 +55,25 @@ public class PolygonHelper
         {
         case LEFT_ARROW:
             return makePolygon(xLeftArrow, yLeftArrow, x, y, width, height);
+            
         case RIGHT_ARROW:
             return makePolygon(xRightArrow, yRightArrow, x, y, width, height);
+            
         case UP_ARROW:
             return makePolygon(xUpArrow, yUpArrow, x, y, width, height);
+            
         case DOWN_ARROW:
             return makePolygon(xDownArrow, yDownArrow, x, y, width, height);
+            
         case GO_FORWARD:
             return makePolygon(xGoForward, yGoForward, x, y, width, height);
+            
         case TURN_LEFT:
             return makePolygon(xTurnLeft, yTurnLeft, x, y, width, height);
+            
         case TURN_RIGHT:
             return makePolygon(xTurnRight, yTurnRight, x, y, width, height);
+            
         default:
             return null;
         }

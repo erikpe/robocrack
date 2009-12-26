@@ -85,6 +85,7 @@ public class InstructionSlotComponent extends SquareComponent implements
         paintLabel();
         paintBlob(g);
         paintArrow(g);
+        paintProgramCounter(g);
     }
     
     private void paintLabel()
@@ -145,6 +146,19 @@ public class InstructionSlotComponent extends SquareComponent implements
         g.fillPolygon(arrow);
         g.setColor(Color.BLACK);
         g.drawPolygon(arrow);
+    }
+    
+    private void paintProgramCounter(final Graphics g)
+    {
+        if (!position.equals(programModel.getProgramCounter()))
+        {
+            return;
+        }
+        
+        g.setColor(Color.YELLOW);
+        g.drawRect(1, 1, width() - 3, height() - 3);
+        g.setColor(Color.BLACK);
+        g.drawRect(2, 2, width() - 5, height() - 5);
     }
     
     private Polygon getPolygonFromOpCode(final OpCode opCode)

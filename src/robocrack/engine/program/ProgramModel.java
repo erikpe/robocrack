@@ -38,11 +38,13 @@ public class ProgramModel extends Observable
     
     private final int[] functionLength;
     private final Instruction[][] program;
+    private InstructionPosition programCounter;
     
     public ProgramModel()
     {
         this.functionLength = new int[MAX_FUNCTIONS];
         this.program = new Instruction[MAX_FUNCTIONS][];
+        this.programCounter = InstructionPosition.make(1, 0);
         
         initialize();
     }
@@ -152,5 +154,10 @@ public class ProgramModel extends Observable
     {
         setOpCode(position, OpCode.NOP);
         setCondition(position, Condition.ON_ALL);
+    }
+    
+    public InstructionPosition getProgramCounter()
+    {
+        return programCounter;
     }
 }

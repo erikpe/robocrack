@@ -9,6 +9,7 @@ import robocrack.gui.board.BoardButtonPane;
 import robocrack.gui.board.BoardPane;
 import robocrack.gui.program.FunctionButtonPane;
 import robocrack.gui.program.ProgramPane;
+import robocrack.gui.simulator.SimulatorButtonPane;
 
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame
@@ -22,6 +23,8 @@ public class MainWindow extends JFrame
         final FunctionButtonPane functionButtonPane = new FunctionButtonPane(
                 guiModel);
         final ProgramPane programPane = new ProgramPane(programModel, guiModel);
+        final SimulatorButtonPane simButtonPane = new SimulatorButtonPane(
+                programModel, guiModel);
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
@@ -32,6 +35,7 @@ public class MainWindow extends JFrame
         getContentPane().add(boardPane);
         getContentPane().add(functionButtonPane);
         getContentPane().add(programPane);
+        getContentPane().add(simButtonPane);
         
         pack();
         setMinimumSize(getPreferredSize());
