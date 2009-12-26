@@ -1,22 +1,27 @@
 package robocrack.gui.program;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import robocrack.engine.program.InstructionPosition;
 import robocrack.engine.program.ProgramModel;
 import robocrack.gui.GuiModel;
 import robocrack.gui.program.PlusMinusButton.PlusMinus;
 
 @SuppressWarnings("serial")
-public class FunctionRowPane extends JComponent
+public class FunctionRowPane extends JComponent implements Observer
 {
     private static final int SPACING = 3;
     
     private final ProgramModel programModel;
     private final GuiModel guiModel;
     private final int function;
+    private final JLabel label;
     
     public FunctionRowPane(final ProgramModel programModel,
             final GuiModel guiModel, final int function)
@@ -24,6 +29,7 @@ public class FunctionRowPane extends JComponent
         this.programModel = programModel;
         this.guiModel = guiModel;
         this.function = function;
+        this.label = new JLabel();
         
         initialize();
     }
@@ -38,12 +44,15 @@ public class FunctionRowPane extends JComponent
         xBounds = addPlusMinus(xBounds + SPACING, PlusMinus.PLUS);
         
         setPreferredSize(new Dimension(xBounds, InstructionSlotComponent.HEIGHT));
+        
+        programModel.addObserver(this);
     }
     
     private int addLabel(final int xBounds)
     {
-        final JLabel label = new JLabel("F" + function);
-        final int width = Math.max(25, label.getPreferredSize().width);
+        updateLabel();
+        
+        final int width = 50;
         final int height = label.getPreferredSize().height;
         add(label);
 
@@ -78,5 +87,36 @@ public class FunctionRowPane extends JComponent
         button.setBounds(xBounds, 0, width, height);
         
         return xBounds + width;
+    }
+    
+    private void updateLabel()
+    {
+        final int length = programModel.getFunctionLength(function);
+        String text = "F" + function;
+        
+        if (length == 0)
+        {
+            label.setForeground(Color.GRAY);
+        }
+        else
+        {
+            label.setForeground(Color.BLACK);
+            text = text + " (" + length + ")";
+        }
+        
+        label.setText(text);
+    }
+    
+    @Override
+    public void update(final Observable observable, final Object arg)
+    {
+        if (arg instanceof InstructionPosition)
+        {
+            final InstructionPosition argPosition = (InstructionPosition) arg;
+            if (argPosition.function == function)
+            {
+                updateLabel();
+            }
+        }
     }
 }

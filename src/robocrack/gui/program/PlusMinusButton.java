@@ -7,6 +7,7 @@ import java.util.Observer;
 
 import javax.swing.JButton;
 
+import robocrack.engine.program.InstructionPosition;
 import robocrack.engine.program.ProgramModel;
 
 @SuppressWarnings("serial")
@@ -98,7 +99,14 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
     @Override
     public void update(final Observable observable, final Object arg)
     {
-        update();
+        if (arg instanceof InstructionPosition)
+        {
+            final InstructionPosition argPosition = (InstructionPosition) arg;
+            if (Math.abs(argPosition.function - function) <= 1)
+            {
+                update();
+            }
+        }
     }
     
     @Override

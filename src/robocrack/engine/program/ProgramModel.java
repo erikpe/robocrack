@@ -15,7 +15,11 @@ public class ProgramModel extends Observable
         CALL_F2,
         CALL_F3,
         CALL_F4,
-        CALL_F5
+        CALL_F5,
+        
+        PAINT_RED,
+        PAINT_GREEN,
+        PAINT_BLUE
     }
     
     public static enum Condition
@@ -63,7 +67,7 @@ public class ProgramModel extends Observable
     
     private final Instruction instructionAt(final InstructionPosition position)
     {
-        return program[position.function][position.slot];
+        return program[position.function - 1][position.slot];
     }
     
     public int getMaxFunctions()
@@ -81,33 +85,34 @@ public class ProgramModel extends Observable
         return functionLength[function - 1];
     }
     
-    public void setFunctionLength(final int function, int length)
+    public void setFunctionLength(final int function, int newLength)
     {
-        if (function > getMaxFunctions() || function <= 0)
-        {
-            return;
-        }
-        
-        length = Math.max(0, length);
-        length = Math.min(getMaxFunctionLength(), length);
+        newLength = Math.max(0, newLength);
+        newLength = Math.min(getMaxFunctionLength(), newLength);
         
         if (function == 1)
         {
-            length = Math.max(1, length);
+            newLength = Math.max(1, newLength);
         }
         else if (getFunctionLength(function - 1) == 0)
         {
-            length = 0;
+            newLength = 0;
         }
         else if (function < getMaxFunctions() && getFunctionLength(function + 1) > 0)
         {
-            length = Math.max(1, length);
+            newLength = Math.max(1, newLength);
         }
         
-        functionLength[function - 1] = length;
+        final int oldLength = getFunctionLength(function);
+        functionLength[function - 1] = newLength;
         
-        setChanged();
-        notifyObservers();
+        final int updateFrom = Math.min(oldLength, newLength);
+        final int updateTo = Math.max(oldLength, newLength);
+        
+        for (int slot = updateFrom; slot < updateTo; ++slot)
+        {
+            clear(InstructionPosition.make(function, slot));
+        }
     }
     
     public boolean isActive(final InstructionPosition position)
@@ -125,7 +130,8 @@ public class ProgramModel extends Observable
         return instructionAt(position).condition;
     }
     
-    public void setOpCode(final InstructionPosition position, final OpCode opCode)
+    public void setOpCode(final InstructionPosition position,
+            final OpCode opCode)
     {
         instructionAt(position).opCode = opCode;
         
@@ -133,11 +139,18 @@ public class ProgramModel extends Observable
         notifyObservers(position);
     }
     
-    public void setCondition(final InstructionPosition position, final Condition condition)
+    public void setCondition(final InstructionPosition position,
+            final Condition condition)
     {
         instructionAt(position).condition = condition;
         
         setChanged();
         notifyObservers(position);
+    }
+    
+    public void clear(final InstructionPosition position)
+    {
+        setOpCode(position, OpCode.NOP);
+        setCondition(position, Condition.ON_ALL);
     }
 }
