@@ -6,6 +6,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import robocrack.engine.program.ProgramModel;
+import robocrack.gui.GuiModel;
 import robocrack.gui.program.PlusMinusButton.PlusMinus;
 
 @SuppressWarnings("serial")
@@ -14,11 +15,14 @@ public class FunctionRowPane extends JComponent
     private static final int SPACING = 3;
     
     private final ProgramModel programModel;
+    private final GuiModel guiModel;
     private final int function;
     
-    public FunctionRowPane(final ProgramModel programModel, final int function)
+    public FunctionRowPane(final ProgramModel programModel,
+            final GuiModel guiModel, final int function)
     {
         this.programModel = programModel;
+        this.guiModel = guiModel;
         this.function = function;
         
         initialize();
@@ -53,7 +57,7 @@ public class FunctionRowPane extends JComponent
     private int addFunction(final int xBounds)
     {
         final FunctionPane functionPane = new FunctionPane(programModel,
-                function);
+                guiModel, function);
         final int width = functionPane.getPreferredSize().width;
         final int height = functionPane.getPreferredSize().height;
         add(functionPane);

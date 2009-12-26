@@ -44,7 +44,12 @@ public class ToggleButton<T extends Enum<?>> extends JToggleButton implements
     @Override
     public void update(final Observable observable, final Object arg)
     {
-        setSelected(guiModel.isSelected(buttonEnum));
+        final boolean isSelected = isSelected();
+        
+        if (isSelected != guiModel.isSelected(buttonEnum))
+        {
+            setSelected(!isSelected);
+        }
     }
     
     @Override

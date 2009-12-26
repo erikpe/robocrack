@@ -61,6 +61,11 @@ public class ProgramModel extends Observable
         setFunctionLength(2, 3);
     }
     
+    private final Instruction instructionAt(final InstructionPosition position)
+    {
+        return program[position.function][position.slot];
+    }
+    
     public int getMaxFunctions()
     {
         return MAX_FUNCTIONS;
@@ -108,5 +113,31 @@ public class ProgramModel extends Observable
     public boolean isActive(final InstructionPosition position)
     {
         return position.slot < getFunctionLength(position.function);
+    }
+    
+    public OpCode getOpCode(final InstructionPosition position)
+    {
+        return instructionAt(position).opCode;
+    }
+    
+    public Condition getCondition(final InstructionPosition position)
+    {
+        return instructionAt(position).condition;
+    }
+    
+    public void setOpCode(final InstructionPosition position, final OpCode opCode)
+    {
+        instructionAt(position).opCode = opCode;
+        
+        setChanged();
+        notifyObservers(position);
+    }
+    
+    public void setCondition(final InstructionPosition position, final Condition condition)
+    {
+        instructionAt(position).condition = condition;
+        
+        setChanged();
+        notifyObservers(position);
     }
 }

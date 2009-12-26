@@ -7,6 +7,8 @@ import java.util.Observer;
 
 import robocrack.engine.program.InstructionPosition;
 import robocrack.engine.program.ProgramModel;
+import robocrack.engine.program.ProgramModel.Condition;
+import robocrack.gui.GuiModel;
 import robocrack.gui.common.SquareComponent;
 
 @SuppressWarnings("serial")
@@ -18,11 +20,13 @@ public class InstructionSlotComponent extends SquareComponent implements
     
     final InstructionPosition position;
     private final ProgramModel programModel;
+    private final GuiModel guiModel;
     
-    InstructionSlotComponent(final ProgramModel programModel,
+    InstructionSlotComponent(final ProgramModel programModel, GuiModel guiModel,
             final InstructionPosition position)
     {
         this.programModel = programModel;
+        this.guiModel = guiModel;
         this.position = position;
         
         programModel.addObserver(this);
@@ -48,7 +52,7 @@ public class InstructionSlotComponent extends SquareComponent implements
     @Override
     protected Color highlightColor(final Color color)
     {
-        if (programModel.isActive(position))
+        if (isActive())
         {
             return super.highlightColor(color);
         }
@@ -65,9 +69,17 @@ public class InstructionSlotComponent extends SquareComponent implements
     @Override
     protected Color getBackgroundColor()
     {
-        if (isActive())
+        if (!isActive())
         {
-            return super.getBackgroundColor();
+            return null;
+        }
+        
+        switch (programModel.getCondition(position))
+        {
+        case ON_ALL: return Color.LIGHT_GRAY;
+        case ON_RED: return Color.RED;
+        case ON_BLUE: return Color.BLUE;
+        case ON_GREEN: return Color.GREEN;
         }
         
         return null;
@@ -82,6 +94,43 @@ public class InstructionSlotComponent extends SquareComponent implements
         }
         
         return Color.LIGHT_GRAY;
+    }
+    
+    @Override
+    protected void leftButtonPressed()
+    {
+        if (!isActive())
+        {
+            return;
+        }
+        
+        switch (guiModel.selectedFunctionButton())
+        {
+        case RED_BUTTON:
+            programModel.setCondition(position, Condition.ON_RED);
+            break;
+            
+        case GREEN_BUTTON:
+            programModel.setCondition(position, Condition.ON_GREEN);
+            break;
+            
+        case BLUE_BUTTON:
+            programModel.setCondition(position, Condition.ON_BLUE);
+            break;
+            
+        case NO_COLOR_BUTTON:
+            programModel.setCondition(position, Condition.ON_ALL);
+            break;
+        }
+    }
+    
+    @Override
+    protected void rightButtonPressed()
+    {
+        if (!isActive())
+        {
+            return;
+        }
     }
     
     @Override

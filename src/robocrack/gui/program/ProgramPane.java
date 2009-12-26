@@ -5,29 +5,22 @@ import java.awt.Dimension;
 import javax.swing.JComponent;
 
 import robocrack.engine.program.ProgramModel;
+import robocrack.gui.GuiModel;
 
 @SuppressWarnings("serial")
 public class ProgramPane extends JComponent
 {
     private static final int SPACING = 3;
     
-    private final ProgramModel programModel;
-    
-    public ProgramPane(final ProgramModel programModel)
-    {
-        this.programModel = programModel;
-        initialize();
-    }
-    
-    private void initialize()
+    public ProgramPane(final ProgramModel programModel, final GuiModel guiModel)
     {
         int yBounds = 0;
         int maxWidth = 0;
         
-        for (int i = 1; i <= programModel.getMaxFunctions(); ++i)
+        for (int function = 1; function <= programModel.getMaxFunctions(); ++function)
         {
             final FunctionRowPane functionRowPane = new FunctionRowPane(
-                    programModel, i);
+                    programModel, guiModel, function);
             
             final int width = functionRowPane.getPreferredSize().width;
             final int height = functionRowPane.getPreferredSize().height;

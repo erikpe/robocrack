@@ -21,7 +21,7 @@ public class MainWindow extends JFrame
         final BoardPane boardPane = new BoardPane(boardModel, guiModel);
         final FunctionButtonPane functionButtonPane = new FunctionButtonPane(
                 guiModel);
-        final ProgramPane programPane = new ProgramPane(programModel);
+        final ProgramPane programPane = new ProgramPane(programModel, guiModel);
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
