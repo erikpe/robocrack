@@ -1,66 +1,176 @@
 package robocrack.engine.simulator;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import robocrack.engine.board.BoardModel;
 import robocrack.engine.board.Cell;
+import robocrack.engine.board.BoardModel.CellColor;
+import robocrack.engine.program.Instruction;
+import robocrack.engine.program.InstructionPosition;
+import robocrack.engine.program.ProgramModel;
+import robocrack.engine.program.ProgramModel.Condition;
 
-public class Simulator
+public class Simulator extends Observable
 {
-    private List<Instruction> f1;
-    private List<Instruction> f2;
-    private List<Instruction> f3;
-    private List<Instruction> f4;
-    private List<Instruction> f5;
+    private final BoardModel boardModel;
+    private final ProgramModel programModel;
     
-    private BoardModel board;
+    private InstructionPosition programCounter;
+    private List<InstructionPosition> stack;
     
-    public Simulator(List<List<Instruction>> program)
-    { 
-        this.f1 = program.get(0);
-        this.f2 = program.get(1);
-        this.f3 = program.get(2);
-        this.f4 = program.get(3);
-        this.f5 = program.get(4);
+    public Simulator(final BoardModel boardModel, final ProgramModel programModel)
+    {
+        this.boardModel = boardModel;
+        this.programModel = programModel;
+        
+        this.programCounter = InstructionPosition.make(1, 0);
+        this.stack = new ArrayList<InstructionPosition>();
     }
     
-    public void simulate()
+    public void step()
     {
-        simulate(f1);
+        final Instruction currentInstruction = programModel
+                .instructionAt(programCounter);
+        
+        execute(currentInstruction);
     }
     
-    private void simulate(final List<Instruction> f)
+    public void reset()
     {
-        int pos = 0;
+        stack.clear();
+        programCounter = InstructionPosition.make(1, 0);
+    }
+    
+    private void execute(final Instruction instruction)
+    {
+        final Cell cell = boardModel.getCurrentCell();
         
-        Cell cell = board.getCurrentCell();
-        
-        Instruction instruction;
-        
-        do
+        if (skip(cell.getColor(), instruction.condition))
         {
-            instruction = f.get(pos);
-            pos++;
-        } while(instruction.condition != Condition.ON_ALL);
+            nextInstruction();
+            return;
+        }
         
-        switch(f.get(pos).action)
+        switch (instruction.opCode)
         {
+        case NOP:
+            nextInstruction();
+            break;
+            
+        case GO_FORWARD:
+            boardModel.goForward();
+            nextInstruction();
+            break;
+            
+        case TURN_LEFT:
+            boardModel.turnLeft();
+            nextInstruction();
+            break;
+            
+        case TURN_RIGHT:
+            boardModel.turnRight();
+            nextInstruction();
+            break;
+            
+        case PAINT_RED:
+            boardModel.setColor(cell.getCoordinate(), CellColor.RED);
+            nextInstruction();
+            break;
+            
+        case PAINT_GREEN:
+            boardModel.setColor(cell.getCoordinate(), CellColor.GREEN);
+            nextInstruction();
+            break;
+            
+        case PAINT_BLUE:
+            boardModel.setColor(cell.getCoordinate(), CellColor.BLUE);
+            nextInstruction();
+            break;
+            
         case CALL_F1:
-            simulate(f1);
+            call(1);
             break;
             
         case CALL_F2:
-            simulate(f2);
+            call(2);
             break;
             
-//        case FORWARD:
-//            board.forward();
-//            cell = board.getCurrentCell();
-//            break;
-//            
-//        case LEFT:
-//            board.left();
+        case CALL_F3:
+            call(3);
+            break;
             
+        case CALL_F4:
+            call(4);
+            break;
+            
+        case CALL_F5:
+            call(5);
+            break;
         }
+    }
+    
+    private boolean skip(final CellColor cellColor, final Condition condition)
+    {
+        switch (condition)
+        {
+        case ON_ALL: return false;
+        case ON_RED: return cellColor != CellColor.RED;
+        case ON_GREEN: return cellColor != CellColor.GREEN;
+        case ON_BLUE: return cellColor != CellColor.BLUE;
+        default: return true;
+        }
+    }
+    
+    private void call(final int function)
+    {
+        pushStack();
+        jumpTo(InstructionPosition.make(function, 0));
+    }
+    
+    private void nextInstruction()
+    {
+        InstructionPosition newPosition = InstructionPosition.make(
+                programCounter.function, programCounter.slot + 1);
+        
+        while (newPosition.slot >= programModel
+                .getFunctionLength(newPosition.function)
+                && !stack.isEmpty())
+        {
+            final InstructionPosition poppedPosition = popStack();
+            newPosition = InstructionPosition.make(poppedPosition.function,
+                    poppedPosition.slot + 1);
+        }
+        
+        jumpTo(newPosition);
+    }
+    
+    private void jumpTo(final InstructionPosition newPosition)
+    {
+        final InstructionPosition oldPosition = programCounter;
+        programCounter = newPosition;
+        
+        setChanged();
+        notifyObservers(oldPosition);
+        setChanged();
+        notifyObservers(newPosition);
+    }
+    
+    private void pushStack()
+    {
+        stack.add(programCounter);
+    }
+    
+    private InstructionPosition popStack()
+    {
+        final InstructionPosition position = stack.get(stack.size() - 1);
+        stack.remove(stack.size() - 1);
+        return position;
+    }
+    
+    public InstructionPosition getProgramCounter()
+    {
+        return programCounter;
     }
 }

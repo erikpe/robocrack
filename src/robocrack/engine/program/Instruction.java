@@ -5,8 +5,8 @@ import robocrack.engine.program.ProgramModel.OpCode;
 
 public class Instruction
 {
-    OpCode opCode;
-    Condition condition;
+    public OpCode opCode;
+    public Condition condition;
     
     Instruction(final OpCode opCode, final Condition condition)
     {

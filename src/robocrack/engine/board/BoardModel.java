@@ -157,6 +157,8 @@ public class BoardModel extends Observable
 
     public void goForward()
     {
+        final CellPosition oldPosition = currentCell.cellPosition;
+        
         switch (arrowDirection)
         {
         case LEFT:
@@ -176,7 +178,7 @@ public class BoardModel extends Observable
             break;
         }
 
-        if (currentCell == null || currentCell.color == CellColor.NONE)
+        if (currentCell == null)// || currentCell.color == CellColor.NONE)
         {
             throw new RuntimeException("Outside of the board");
         }
@@ -191,6 +193,11 @@ public class BoardModel extends Observable
                 throw new RuntimeException("Finished!");
             }
         }
+        
+        setChanged();
+        notifyObservers(oldPosition);
+        setChanged();
+        notifyObservers(currentCell.cellPosition);
     }
 
     public void turnLeft()

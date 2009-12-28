@@ -12,6 +12,7 @@ import robocrack.engine.program.InstructionPosition;
 import robocrack.engine.program.ProgramModel;
 import robocrack.engine.program.ProgramModel.Condition;
 import robocrack.engine.program.ProgramModel.OpCode;
+import robocrack.engine.simulator.Simulator;
 import robocrack.gui.GuiModel;
 import robocrack.gui.GuiModel.FunctionButton;
 import robocrack.gui.common.SquareComponent;
@@ -26,15 +27,19 @@ public class InstructionSlotComponent extends SquareComponent implements
     static final int HEIGHT = WIDTH;
     
     final InstructionPosition position;
+    
     private final ProgramModel programModel;
     private final GuiModel guiModel;
+    private final Simulator simulator;
+    
     private final JLabel label;
     
     InstructionSlotComponent(final ProgramModel programModel, GuiModel guiModel,
-            final InstructionPosition position)
+            final InstructionPosition position, final Simulator simulator)
     {
         this.programModel = programModel;
         this.guiModel = guiModel;
+        this.simulator = simulator;
         this.position = position;
         this.label = new JLabel();
         
@@ -48,6 +53,7 @@ public class InstructionSlotComponent extends SquareComponent implements
         add(label);
         
         programModel.addObserver(this);
+        simulator.addObserver(this);
     }
     
     @Override
@@ -150,15 +156,16 @@ public class InstructionSlotComponent extends SquareComponent implements
     
     private void paintProgramCounter(final Graphics g)
     {
-        if (!position.equals(programModel.getProgramCounter()))
+        if (!position.equals(simulator.getProgramCounter()))
         {
             return;
         }
         
-        g.setColor(Color.YELLOW);
-        g.drawRect(1, 1, width() - 3, height() - 3);
+        final int blockHeight = 4;
         g.setColor(Color.BLACK);
-        g.drawRect(2, 2, width() - 5, height() - 5);
+        g.fillRect(2, height() - 3 - blockHeight, width() - 5, blockHeight);
+        g.setColor(Color.BLACK);
+        g.drawRect(2, height() - 3 - blockHeight, width() - 5, blockHeight);
     }
     
     private Polygon getPolygonFromOpCode(final OpCode opCode)

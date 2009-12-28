@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import javax.swing.JComponent;
 
 import robocrack.engine.program.ProgramModel;
+import robocrack.engine.simulator.Simulator;
 import robocrack.gui.GuiModel;
 
 @SuppressWarnings("serial")
@@ -12,7 +13,7 @@ public class ProgramPane extends JComponent
 {
     private static final int SPACING = 3;
     
-    public ProgramPane(final ProgramModel programModel, final GuiModel guiModel)
+    public ProgramPane(final ProgramModel programModel, final GuiModel guiModel, final Simulator simulator)
     {
         int yBounds = 0;
         int maxWidth = 0;
@@ -20,7 +21,7 @@ public class ProgramPane extends JComponent
         for (int function = 1; function <= programModel.getMaxFunctions(); ++function)
         {
             final FunctionRowPane functionRowPane = new FunctionRowPane(
-                    programModel, guiModel, function);
+                    programModel, guiModel, function, simulator);
             
             final int width = functionRowPane.getPreferredSize().width;
             final int height = functionRowPane.getPreferredSize().height;

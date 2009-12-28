@@ -67,7 +67,7 @@ public class ProgramModel extends Observable
         setFunctionLength(2, 3);
     }
     
-    private final Instruction instructionAt(final InstructionPosition position)
+    public final Instruction instructionAt(final InstructionPosition position)
     {
         return program[position.function - 1][position.slot];
     }

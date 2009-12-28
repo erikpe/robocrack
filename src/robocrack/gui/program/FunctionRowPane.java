@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 
 import robocrack.engine.program.InstructionPosition;
 import robocrack.engine.program.ProgramModel;
+import robocrack.engine.simulator.Simulator;
 import robocrack.gui.GuiModel;
 import robocrack.gui.program.PlusMinusButton.PlusMinus;
 
@@ -21,14 +22,16 @@ public class FunctionRowPane extends JComponent implements Observer
     private final ProgramModel programModel;
     private final GuiModel guiModel;
     private final int function;
+    private final Simulator simulator;
     private final JLabel label;
     
     public FunctionRowPane(final ProgramModel programModel,
-            final GuiModel guiModel, final int function)
+            final GuiModel guiModel, final int function, final Simulator simulator)
     {
         this.programModel = programModel;
         this.guiModel = guiModel;
         this.function = function;
+        this.simulator = simulator;
         this.label = new JLabel();
         
         initialize();
@@ -66,7 +69,7 @@ public class FunctionRowPane extends JComponent implements Observer
     private int addFunction(final int xBounds)
     {
         final FunctionPane functionPane = new FunctionPane(programModel,
-                guiModel, function);
+                guiModel, function, simulator);
         final int width = functionPane.getPreferredSize().width;
         final int height = functionPane.getPreferredSize().height;
         add(functionPane);

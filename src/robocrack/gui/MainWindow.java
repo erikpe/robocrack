@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 
 import robocrack.engine.board.BoardModel;
 import robocrack.engine.program.ProgramModel;
+import robocrack.engine.simulator.Simulator;
 import robocrack.gui.board.BoardButtonPane;
 import robocrack.gui.board.BoardPane;
 import robocrack.gui.program.FunctionButtonPane;
@@ -14,7 +15,8 @@ import robocrack.gui.simulator.SimulatorButtonPane;
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame
 {
-    public MainWindow(final BoardModel boardModel, final ProgramModel programModel)
+    public MainWindow(final BoardModel boardModel,
+            final ProgramModel programModel, final Simulator simulator)
     {
         final GuiModel guiModel = new GuiModel();
         
@@ -22,9 +24,9 @@ public class MainWindow extends JFrame
         final BoardPane boardPane = new BoardPane(boardModel, guiModel);
         final FunctionButtonPane functionButtonPane = new FunctionButtonPane(
                 guiModel);
-        final ProgramPane programPane = new ProgramPane(programModel, guiModel);
+        final ProgramPane programPane = new ProgramPane(programModel, guiModel, simulator);
         final SimulatorButtonPane simButtonPane = new SimulatorButtonPane(
-                programModel, guiModel);
+                programModel, guiModel, simulator);
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         

@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import robocrack.engine.program.ProgramModel;
+import robocrack.engine.simulator.Simulator;
 import robocrack.gui.GuiModel;
 
 @SuppressWarnings("serial")
@@ -16,15 +17,17 @@ public class SimulatorButtonPane extends JComponent implements ActionListener
     private static final int SPACING = 3;
     
     private final ProgramModel programModel;
+    private final Simulator simulator;
     
     private final JButton playPauseButton;
     private final JButton stepButton;
     private final JButton resetButton;
     
     public SimulatorButtonPane(final ProgramModel programModel,
-            final GuiModel guiModel)
+            final GuiModel guiModel, final Simulator simulator)
     {
         this.programModel = programModel;
+        this.simulator = simulator;
         
         this.playPauseButton = new JButton("Play/Pause");
         this.stepButton = new JButton("Step");
@@ -44,6 +47,9 @@ public class SimulatorButtonPane extends JComponent implements ActionListener
         final int height = playPauseButton.getPreferredSize().height;
         setPreferredSize(new Dimension(xBounds, height));
         
+        stepButton.addActionListener(this);
+        resetButton.addActionListener(this);
+        
         playPauseButton.setEnabled(false);
     }
     
@@ -62,6 +68,13 @@ public class SimulatorButtonPane extends JComponent implements ActionListener
     @Override
     public void actionPerformed(final ActionEvent e)
     {
-        
+        if (e.getSource() == stepButton)
+        {
+            simulator.step();
+        }
+        else if (e.getSource() == resetButton)
+        {
+            simulator.reset();
+        }
     }
 }
