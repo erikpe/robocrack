@@ -39,22 +39,22 @@ public class ToggleButton<T extends Enum<?>> extends JToggleButton implements
         
         guiModel.addObserver(this);
         addActionListener(this);
-    }
-    
-    @Override
-    public void update(final Observable observable, final Object arg)
-    {
-        final boolean isSelected = isSelected();
         
-        if (isSelected != guiModel.isSelected(buttonEnum))
-        {
-            setSelected(!isSelected);
-        }
+        setSelected(guiModel.isSelected(buttonEnum));
     }
     
     @Override
     public void actionPerformed(final ActionEvent e)
     {
         guiModel.selectButton(buttonEnum);
+    }
+    
+    @Override
+    public void update(final Observable observable, final Object arg)
+    {
+        if (buttonEnum == arg)
+        {
+            setSelected(guiModel.isSelected(buttonEnum));
+        }
     }
 }

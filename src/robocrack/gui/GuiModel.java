@@ -1,7 +1,9 @@
 package robocrack.gui;
 
 import java.util.Observable;
-import java.util.Observer;
+
+import robocrack.engine.program.InstructionPosition;
+import robocrack.engine.simulator.Simulator.StackDepth;
 
 public class GuiModel extends Observable
 {
@@ -40,12 +42,17 @@ public class GuiModel extends Observable
     private boolean star;
     private BoardButton selectedBoardButton;
     private FunctionButton selectedFunctionButton;
+    private StackDepth stackDepthHighlight;
+    private InstructionPosition instPosHighlight;
     
     GuiModel()
     {
         this.star = true;
         this.selectedBoardButton = BoardButton.values()[0];
         this.selectedFunctionButton = FunctionButton.values()[0];
+        
+        this.stackDepthHighlight = null;
+        this.instPosHighlight = null;
     }
     
     public boolean isSelected(final Enum<?> buttonEnum)
@@ -65,17 +72,25 @@ public class GuiModel extends Observable
     
     public void selectButton(final Enum<?> buttonEnum)
     {
+        final Enum<?> oldButton;
+        
         if (buttonEnum instanceof BoardButton)
         {
-            this.selectedBoardButton = (BoardButton) buttonEnum;
+            oldButton = selectedBoardButton;
+            selectedBoardButton = (BoardButton) buttonEnum;
         }
-        else if (buttonEnum instanceof FunctionButton)
+        else
         {
-            this.selectedFunctionButton = (FunctionButton) buttonEnum;
+            assert buttonEnum instanceof FunctionButton;
+            oldButton = selectedFunctionButton;
+            selectedFunctionButton = (FunctionButton) buttonEnum;
         }
         
         setChanged();
-        notifyObservers();
+        notifyObservers(oldButton);
+        
+        setChanged();
+        notifyObservers(buttonEnum);
     }
     
     public BoardButton selectedBoardButton()
@@ -98,12 +113,49 @@ public class GuiModel extends Observable
         return star;
     }
     
-    @Override
-    public void addObserver(final Observer observer)
+    public void setStackDepthHighlight(final StackDepth depth)
     {
-        super.addObserver(observer);
+        final StackDepth oldHighlight = stackDepthHighlight;
+        stackDepthHighlight = depth;
         
-        setChanged();
-        notifyObservers();
+        if (oldHighlight != null)
+        {
+            setChanged();
+            notifyObservers(oldHighlight);
+        }
+        
+        if (stackDepthHighlight != null)
+        {
+            setChanged();
+            notifyObservers(stackDepthHighlight);
+        }
+    }
+    
+    public StackDepth getStackDepthHighlight()
+    {
+        return stackDepthHighlight;
+    }
+    
+    public void setInstPosHighlight(final InstructionPosition position)
+    {
+        final InstructionPosition oldHighlight = instPosHighlight;
+        instPosHighlight = position;
+        
+        if (oldHighlight != null)
+        {
+            setChanged();
+            notifyObservers(oldHighlight);
+        }
+        
+        if (instPosHighlight != null)
+        {
+            setChanged();
+            notifyObservers(instPosHighlight);
+        }
+    }
+    
+    public InstructionPosition getInstPosHighlight()
+    {
+        return instPosHighlight;
     }
 }

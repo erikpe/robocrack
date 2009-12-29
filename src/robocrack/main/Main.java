@@ -9,7 +9,7 @@ public class Main
 {
     public static void main(final String[] argv)
     {
-        final BoardModel boardModel = new BoardModel(22, 15);
+        final BoardModel boardModel = new BoardModel(23, 15);
         final ProgramModel programModel = new ProgramModel();
         final Simulator simulator = new Simulator(boardModel, programModel);
         

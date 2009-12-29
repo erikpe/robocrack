@@ -13,6 +13,7 @@ import robocrack.engine.program.ProgramModel;
 import robocrack.engine.program.ProgramModel.Condition;
 import robocrack.engine.program.ProgramModel.OpCode;
 import robocrack.engine.simulator.Simulator;
+import robocrack.engine.simulator.Simulator.StackDepth;
 import robocrack.gui.GuiModel;
 import robocrack.gui.GuiModel.FunctionButton;
 import robocrack.gui.common.SquareComponent;
@@ -54,6 +55,7 @@ public class InstructionSlotComponent extends SquareComponent implements
         
         programModel.addObserver(this);
         simulator.addObserver(this);
+        guiModel.addObserver(this);
     }
     
     @Override
@@ -92,6 +94,7 @@ public class InstructionSlotComponent extends SquareComponent implements
         paintBlob(g);
         paintArrow(g);
         paintProgramCounter(g);
+        paintStackHighlight(g);
     }
     
     private void paintLabel()
@@ -166,6 +169,37 @@ public class InstructionSlotComponent extends SquareComponent implements
         g.fillRect(2, height() - 3 - blockHeight, width() - 5, blockHeight);
         g.setColor(Color.BLACK);
         g.drawRect(2, height() - 3 - blockHeight, width() - 5, blockHeight);
+    }
+    
+    private void paintStackHighlight(final Graphics g)
+    {
+        if (!stackHighlighted())
+        {
+            return;
+        }
+        
+        final int xBounds = width() - 3 * width() / 8;
+        final int yBounds = height() - 3 * height() / 8;
+        final int width = width() / 4;
+        final int height = height() / 4;
+        
+        g.setColor(Color.YELLOW);
+        g.fillOval(xBounds, yBounds, width, height);
+        g.setColor(Color.BLACK);
+        g.drawOval(xBounds, yBounds, width, height);
+    }
+    
+    private boolean stackHighlighted()
+    {
+        if (position.equals(guiModel.getInstPosHighlight()))
+        {
+            return true;
+        }
+        
+        final StackDepth depth = guiModel.getStackDepthHighlight();
+        final InstructionPosition pos = simulator.getStackPointerAt(depth);
+        
+        return position.equals(pos);
     }
     
     private Polygon getPolygonFromOpCode(final OpCode opCode)
@@ -302,15 +336,34 @@ public class InstructionSlotComponent extends SquareComponent implements
     }
     
     @Override
+    protected void noButtonEntered()
+    {
+        if (isActive())
+        {
+            guiModel.setInstPosHighlight(position);
+        }
+    }
+    
+    @Override
+    protected void noButtonExited()
+    {
+        if (isActive())
+        {
+            guiModel.setInstPosHighlight(null);
+        }
+    }
+    
+    @Override
     public void update(final Observable observable, final Object arg)
     {
-        if (arg instanceof InstructionPosition)
+        if (position.equals(arg))
         {
-            final InstructionPosition argPosition = (InstructionPosition) arg;
-            if (argPosition.equals(position))
-            {
-                repaint();
-            }
+            repaint();
+        }
+        else if (arg instanceof StackDepth && position.equals(simulator
+                        .getStackPointerAt((StackDepth) arg)))
+        {
+            repaint();
         }
     }
 }

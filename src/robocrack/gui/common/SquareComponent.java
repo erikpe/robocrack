@@ -96,6 +96,10 @@ public abstract class SquareComponent extends JComponent implements
     
     protected void rightButtonExited() { }
     
+    protected void noButtonEntered() { }
+    
+    protected void noButtonExited() { }
+    
     @Override
     public void mouseClicked(final MouseEvent e) { }
     
@@ -111,6 +115,10 @@ public abstract class SquareComponent extends JComponent implements
         else if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0)
         {
             rightButtonEntered();
+        }
+        else
+        {
+            noButtonEntered();
         }
         
         repaint();
@@ -128,6 +136,10 @@ public abstract class SquareComponent extends JComponent implements
         else if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0)
         {
             rightButtonExited();
+        }
+        else
+        {
+            noButtonExited();
         }
         
         repaint();

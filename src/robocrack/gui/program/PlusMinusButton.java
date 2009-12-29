@@ -97,19 +97,6 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
     }
     
     @Override
-    public void update(final Observable observable, final Object arg)
-    {
-        if (arg instanceof InstructionPosition)
-        {
-            final InstructionPosition argPosition = (InstructionPosition) arg;
-            if (Math.abs(argPosition.function - function) <= 1)
-            {
-                update();
-            }
-        }
-    }
-    
-    @Override
     public void actionPerformed(final ActionEvent e)
     {
         final int length = programModel.getFunctionLength(function);
@@ -123,6 +110,19 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
         case MINUS:
             programModel.setFunctionLength(function, length - 1);
             break;
+        }
+    }
+    
+    @Override
+    public void update(final Observable observable, final Object arg)
+    {
+        if (arg instanceof InstructionPosition)
+        {
+            final InstructionPosition argPosition = (InstructionPosition) arg;
+            if (Math.abs(argPosition.function - function) <= 1)
+            {
+                update();
+            }
         }
     }
 }

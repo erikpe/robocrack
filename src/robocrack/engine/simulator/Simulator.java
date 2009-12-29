@@ -14,6 +14,29 @@ import robocrack.engine.program.ProgramModel.Condition;
 
 public class Simulator extends Observable
 {
+    public static class StackDepth
+    {
+        public final int intValue;
+        
+        public StackDepth(final int depth)
+        {
+            this.intValue = depth;
+        }
+        
+        @Override
+        public boolean equals(final Object obj)
+        {
+            return obj != null && obj instanceof StackDepth
+                    && ((StackDepth) obj).intValue == intValue;
+        }
+        
+        @Override
+        public String toString()
+        {
+            return String.valueOf(intValue);
+        }
+    }
+    
     private final BoardModel boardModel;
     private final ProgramModel programModel;
     
@@ -39,8 +62,12 @@ public class Simulator extends Observable
     
     public void reset()
     {
-        stack.clear();
-        programCounter = InstructionPosition.make(1, 0);
+        while (!stack.isEmpty())
+        {
+            popStack();
+        }
+        
+        jumpTo(InstructionPosition.make(1, 0));
     }
     
     private void execute(final Instruction instruction)
@@ -160,17 +187,34 @@ public class Simulator extends Observable
     private void pushStack()
     {
         stack.add(programCounter);
+        
+        setChanged();
+        notifyObservers(new StackDepth(stack.size() - 1));
     }
     
     private InstructionPosition popStack()
     {
         final InstructionPosition position = stack.get(stack.size() - 1);
         stack.remove(stack.size() - 1);
+        
+        setChanged();
+        notifyObservers(new StackDepth(stack.size()));
+        
         return position;
     }
     
     public InstructionPosition getProgramCounter()
     {
         return programCounter;
+    }
+    
+    public InstructionPosition getStackPointerAt(final StackDepth depth)
+    {
+        if (depth != null && depth.intValue < stack.size())
+        {
+            return stack.get(depth.intValue);
+        }
+        
+        return null;
     }
 }
