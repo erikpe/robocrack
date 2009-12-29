@@ -14,12 +14,24 @@ public abstract class SquareComponent extends JComponent implements
 {
     private static final Color DEFAULT_COLOR = Color.LIGHT_GRAY;
     private static final Color DEFAULT_BORDER_COLOR = Color.BLACK;
+    private static final Color DEFAULT_INACTIVE_COLOR = null;
+    private static final Color DEFAULT_INACTIVE_BORDER_COLOR = Color.LIGHT_GRAY;
     
     private boolean isHighlighted = false;
     
     public SquareComponent()
     {
         addMouseListener(this);
+    }
+    
+    protected boolean isActive()
+    {
+        return true;
+    }
+    
+    protected boolean isLocked()
+    {
+        return true;
     }
     
     protected abstract int width();
@@ -36,11 +48,14 @@ public abstract class SquareComponent extends JComponent implements
         return DEFAULT_BORDER_COLOR;
     }
     
-    @Override
-    public void paintComponent(final Graphics g)
+    protected Color getInactiveBackgroundColor()
     {
-        paintBackground(g);
-        paintBorder(g);
+        return DEFAULT_INACTIVE_COLOR;
+    }
+    
+    protected Color getInactiveBorderColor()
+    {
+        return DEFAULT_INACTIVE_BORDER_COLOR;
     }
     
     protected Color highlightColor(final Color color)
@@ -58,26 +73,59 @@ public abstract class SquareComponent extends JComponent implements
     
     protected void paintBackground(final Graphics g)
     {
-        Color color = getBackgroundColor();
+        final Color color;
         
-        if (color == null)
+        if (!isActive())
         {
-            return;
+            color = getInactiveBackgroundColor();
+        }
+        else if (isHighlighted)
+        {
+            color = highlightColor(getBackgroundColor());
+        }
+        else
+        {
+            color = getBackgroundColor();
         }
         
-        if (isHighlighted)
+        if (color != null)
         {
-            color = highlightColor(color);
+            g.setColor(color);
+            g.fillRect(0, 0, width() - 1, height() - 1);
         }
-        
-        g.setColor(color);
-        g.fillRect(0, 0, width() - 1, height() - 1);
     }
     
     protected void paintBorder(final Graphics g)
     {
-        g.setColor(getBorderColor());
-        g.drawRect(0, 0, width() - 1, height() - 1);
+        final Color color;
+        
+        if (!isActive())
+        {
+            color = getInactiveBorderColor();
+        }
+        else
+        {
+            color = getBorderColor();
+        }
+        
+        if (color != null)
+        {
+            g.setColor(color);
+            g.drawRect(0, 0, width() - 1, height() - 1);
+        }
+    }
+    
+    protected void paintLock(final Graphics g)
+    {
+        if (true || !isActive() || !isLocked())
+        {
+            return;
+        }
+        
+        final Color color = Color.RED;
+        g.setColor(color);
+        g.drawLine(0, 0, width(), height());
+        g.drawLine(width(), 0, 0, height());
     }
     
     protected void leftButtonPressed() { }

@@ -12,16 +12,25 @@ public class Cell
     Cell upNeighbour = null;
     Cell downNeighbour = null;
     
+    final CellPosition cellPosition;
+    
     CellColor color;
     boolean hasStar;
-    final CellPosition cellPosition;
+    
+    CellColor simColor;
+    boolean simHasStar;
     
     Cell(final CellPosition cellPosition)
     {
         this.x = cellPosition.x;
         this.y = cellPosition.y;
+        
         this.color = CellColor.NONE;
+        this.simColor = CellColor.NONE;
+        
         this.hasStar = false;
+        this.simHasStar = false;
+        
         this.cellPosition = cellPosition;
     }
     
@@ -40,9 +49,15 @@ public class Cell
         return color;
     }
     
-    public void setStar(final boolean hasStar)
+    boolean resetSimulation()
     {
-        this.hasStar = hasStar;
+        return simColor != color || simHasStar != hasStar;
+    }
+    
+    void startSimulation()
+    {
+        simColor = color;
+        simHasStar = hasStar;
     }
     
     @Override

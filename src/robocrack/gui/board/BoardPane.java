@@ -6,7 +6,7 @@ import java.util.Observer;
 
 import javax.swing.JComponent;
 
-import robocrack.engine.board.BoardModel;
+import robocrack.engine.board.BoardEditor;
 import robocrack.engine.board.CellPosition;
 import robocrack.gui.GuiModel;
 
@@ -15,28 +15,28 @@ public class BoardPane extends JComponent implements Observer
 {
     private final static int CELL_SPACING = 1;
     
-    private final BoardModel board;
+    private final BoardEditor boardEditor;
     private final GuiModel guiModel;
     
     private final CellComponent[][] cells;
     
-    public BoardPane(final BoardModel board, final GuiModel guiState)
+    public BoardPane(final BoardEditor boardEditor, final GuiModel guiState)
     {
-        this.board = board;
+        this.boardEditor = boardEditor;
         this.guiModel = guiState;
-        this.cells = new CellComponent[board.width()][board.height()];
+        this.cells = new CellComponent[boardEditor.width()][boardEditor.height()];
         
         initialize();
     }
     
     private void initialize()
     {
-        for (int y = 0; y < board.height(); ++y)
+        for (int y = 0; y < boardEditor.height(); ++y)
         {
-            for (int x = 0; x < board.width(); ++x)
+            for (int x = 0; x < boardEditor.width(); ++x)
             {
                 final CellPosition cellPosition = CellPosition.make(x, y);
-                CellComponent cc = new CellComponent(board, cellPosition, guiModel);
+                CellComponent cc = new CellComponent(boardEditor, cellPosition, guiModel);
                 cells[x][y] = cc;
                 add(cc);
                 
@@ -50,14 +50,14 @@ public class BoardPane extends JComponent implements Observer
             }
         }
         
-        final int width = board.width()
+        final int width = boardEditor.width()
                 * (CellComponent.CELL_WIDTH + CELL_SPACING) - CELL_SPACING;
-        final int height = board.height()
+        final int height = boardEditor.height()
                 * (CellComponent.CELL_HEIGHT + CELL_SPACING) - CELL_SPACING;
         
         setPreferredSize(new Dimension(width, height));
         
-        board.addObserver(this);
+        boardEditor.addObserver(this);
     }
     
     private CellComponent cellComponentAt(final CellPosition cellPosition)

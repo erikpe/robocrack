@@ -26,8 +26,7 @@ public class MainWindow extends JFrame
         final FunctionButtonPane functionButtonPane = new FunctionButtonPane(
                 guiModel);
         final ProgramPane programPane = new ProgramPane(programModel, guiModel, simulator);
-        final SimulatorButtonPane simButtonPane = new SimulatorButtonPane(
-                programModel, guiModel, simulator);
+        final SimulatorButtonPane simButtonPane = new SimulatorButtonPane(simulator);
         final StackPane stackPane = new StackPane(simulator, guiModel, 15, 3);
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

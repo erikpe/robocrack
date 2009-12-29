@@ -37,7 +37,7 @@ public class StackComponent extends SquareComponent implements Observer
     
     private void initialize()
     {
-        label.setVisible(false);
+        updateLabel();
         add(label);
         
         simulator.addObserver(this);
@@ -57,14 +57,12 @@ public class StackComponent extends SquareComponent implements Observer
     }
     
     @Override
-    public void paintComponent(final Graphics g)
+    protected boolean isActive()
     {
-        super.paintComponent(g);
-        paintLabel();
-        paintStackHighlight(g);
+        return simulator.getStackPointerAt(depth) != null;
     }
     
-    private void paintLabel()
+    private void updateLabel()
     {
         final InstructionPosition position = simulator.getStackPointerAt(depth);
         
@@ -86,9 +84,17 @@ public class StackComponent extends SquareComponent implements Observer
         label.setVisible(true);
     }
     
+    @Override
+    public void paintComponent(final Graphics g)
+    {
+        paintBackground(g);
+        paintBorder(g);
+        paintStackHighlight(g);
+    }
+    
     private void paintStackHighlight(final Graphics g)
     {
-        if (!stackHighlighted())
+        if (!isActive() || !stackHighlighted())
         {
             return;
         }
@@ -134,10 +140,12 @@ public class StackComponent extends SquareComponent implements Observer
     {
         if (depth.equals(arg))
         {
+            updateLabel();
             repaint();
         }
         else if (arg != null && arg.equals(simulator.getStackPointerAt(depth)))
         {
+            updateLabel();
             repaint();
         }
     }

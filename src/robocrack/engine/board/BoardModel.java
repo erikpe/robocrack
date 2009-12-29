@@ -2,7 +2,8 @@ package robocrack.engine.board;
 
 import java.util.Observable;
 
-public class BoardModel extends Observable
+public class BoardModel extends Observable implements BoardEditor,
+        BoardSimulator
 {
     public static enum CellColor
     {
@@ -17,7 +18,39 @@ public class BoardModel extends Observable
         LEFT,
         RIGHT,
         UP,
-        DOWN
+        DOWN;
+        
+        public ArrowDirection turnLeft()
+        {
+            switch (this)
+            {
+            case RIGHT: return UP;
+            case DOWN: return RIGHT;
+            case LEFT: return DOWN;
+            case UP: return LEFT;
+            }
+            
+            return null;
+        }
+        
+        public ArrowDirection turnRight()
+        {
+            switch (this)
+            {
+            case RIGHT: return DOWN;
+            case DOWN: return LEFT;
+            case LEFT: return UP;
+            case UP: return RIGHT;
+            }
+            
+            return null;
+        }
+    }
+    
+    public static enum Mode
+    {
+        EDIT,
+        SIMULATE
     }
     
     private static final ArrowDirection ARROW_DEFAULT_DIRECTION = ArrowDirection.RIGHT;
@@ -26,53 +59,65 @@ public class BoardModel extends Observable
 
     private final int width;
     private final int height;
-
+    
+    private Mode mode;
+    
     private final Cell[][] board;
-
-    private ArrowDirection arrowDirection;
-    private Cell currentCell;
+    
+    private ArrowDirection startArrowDirection;
+    private Cell startCell;
     private int nrStars;
 
+    private ArrowDirection simArrowDirection;
+    private Cell simCurrentCell;
+    private int simNrStars;
+    
     public BoardModel(final int width, final int height)
     {
         this.width = width;
         this.height = height;
-        this.board = makeBoard(width, height);
-        this.arrowDirection = ARROW_DEFAULT_DIRECTION;
-        this.currentCell = cellAt(ARROW_DEFAULT_POSITION);
+        this.mode = Mode.EDIT;
+        
+        this.board = makeBoard();
+        this.startArrowDirection = ARROW_DEFAULT_DIRECTION;
+        this.startCell = cellAt(ARROW_DEFAULT_POSITION);
     }
-
-    private static Cell[][] makeBoard(final int width, final int height)
+    
+    private Cell[][] makeBoard()
     {
-        final Cell[][] tmpBoard = new Cell[width][];
+        final Cell[][] tmpBoard = new Cell[width()][];
 
-        for (int x = 0; x < width; ++x)
+        for (int x = 0; x < width(); ++x)
         {
-            tmpBoard[x] = new Cell[height];
+            tmpBoard[x] = new Cell[height()];
 
-            for (int y = 0; y < height; ++y)
+            for (int y = 0; y < height(); ++y)
             {
                 tmpBoard[x][y] = new Cell(CellPosition.make(x, y));
             }
         }
-
-        for (int x = 0; x < width; ++x)
+        
+        for (int x = 0; x < width(); ++x)
         {
-            for (int y = 0; y < height; ++y)
+            for (int y = 0; y < height(); ++y)
             {
-                if (x > 0) {
+                if (x > 0)
+                {
                     tmpBoard[x][y].leftNeighbour = tmpBoard[x - 1][y];
                 }
 
-                if (x < width - 1) {
+                if (x < width() - 1)
+                {
                     tmpBoard[x][y].rightNeighbour = tmpBoard[x + 1][y];
                 }
 
-                if (y > 0) {
+                if (y > 0)
+                {
                     tmpBoard[x][y].upNeighbour = tmpBoard[x][y - 1];
                 }
 
-                if (y < height - 1) {
+                if (y < height() - 1)
+                {
                     tmpBoard[x][y].downNeighbour = tmpBoard[x][y + 1];
                 }
             }
@@ -80,7 +125,52 @@ public class BoardModel extends Observable
 
         return tmpBoard;
     }
-
+    
+    public Mode getMode()
+    {
+        return mode;
+    }
+    
+    public void startSimulation()
+    {
+        mode = Mode.SIMULATE;
+        
+        simArrowDirection = startArrowDirection;
+        simCurrentCell = startCell;
+        simNrStars = nrStars;
+        
+        for (int y = 0; y < height(); ++y)
+        {
+            for (int x = 0; x < width(); ++x)
+            {
+                board[x][y].startSimulation();
+            }
+        }
+    }
+    
+    public void resetSimulation()
+    {
+        mode = Mode.EDIT;
+        
+        for (int y = 0; y < height(); ++y)
+        {
+            for (int x = 0; x < width(); ++x)
+            {
+                if (board[x][y].resetSimulation())
+                {
+                    setChanged();
+                    notifyObservers(board[x][y].cellPosition);
+                }
+            }
+        }
+        
+        setChanged();
+        notifyObservers(simCurrentCell.cellPosition);
+        
+        setChanged();
+        notifyObservers(startCell.cellPosition);
+    }
+    
     private Cell cellAt(final CellPosition coord)
     {
         return board[coord.x][coord.y];
@@ -95,100 +185,146 @@ public class BoardModel extends Observable
     {
         return height;
     }
-
-    public Cell getCurrentCell()
-    {
-        return currentCell;
-    }
-
+    
     public boolean hasStar(final CellPosition cellPosition)
     {
-        return cellAt(cellPosition).hasStar;
+        final Cell cell = cellAt(cellPosition);
+        return mode == Mode.EDIT ? cell.hasStar : cell.simHasStar;
     }
-
+    
     public void setStar(final CellPosition cellPosition, final boolean star)
     {
-        if (cellAt(cellPosition).getColor() != CellColor.NONE)
+        if (mode != Mode.EDIT)
+        {
+            return;
+        }
+        
+        if (cellAt(cellPosition).color != CellColor.NONE)
         {
             cellAt(cellPosition).hasStar = star;
         }
-
+        
         setChanged();
         notifyObservers(cellPosition);
     }
-
+    
     public void setColor(final CellPosition cellPosition, final CellColor color)
     {
-        cellAt(cellPosition).setColor(color);
-
-        if (color == CellColor.NONE) {
+        if (mode != Mode.EDIT)
+        {
+            return;
+        }
+        
+        cellAt(cellPosition).color = color;
+        
+        if (color == CellColor.NONE)
+        {
             cellAt(cellPosition).hasStar = false;
         }
-
+        
         setChanged();
         notifyObservers(cellPosition);
     }
-
+    
+    public void simPaintColor(final CellColor color)
+    {
+        if (mode != Mode.SIMULATE)
+        {
+            return;
+        }
+        
+        simCurrentCell.simColor = color;
+        
+        setChanged();
+        notifyObservers(simCurrentCell.cellPosition);
+    }
+    
     public CellColor getColor(final CellPosition cellPosition)
     {
-        return cellAt(cellPosition).color;
+        final Cell cell = cellAt(cellPosition);
+        return mode == Mode.EDIT ? cell.color : cell.simColor;
     }
-
-    public CellPosition arrowCoordinate()
+    
+    public CellPosition getArrowPosition()
     {
-        return currentCell.cellPosition;
+        return mode == Mode.EDIT ? startCell.cellPosition
+                : simCurrentCell.cellPosition;
     }
-
-    public ArrowDirection arrowDirection()
+    
+    public ArrowDirection getArrowDirection()
     {
-        return arrowDirection;
+        return mode == Mode.EDIT ? startArrowDirection : simArrowDirection;
     }
-
-    public void setArrow(final CellPosition cellPosition)
+    
+    public Cell getCurrentCell()
     {
-        final CellPosition oldCoordinate = arrowCoordinate();
-        currentCell = cellAt(cellPosition);
-
-        setChanged();
-        notifyObservers(oldCoordinate);
-        setChanged();
-        notifyObservers(arrowCoordinate());
+        return mode == Mode.EDIT ? startCell : simCurrentCell;
     }
-
-    public void goForward()
+    
+    public void setArrowPosition(final CellPosition cellPosition)
     {
-        final CellPosition oldPosition = currentCell.cellPosition;
+        if (mode != Mode.EDIT)
+        {
+            return;
+        }
         
+        final CellPosition oldPosition = getArrowPosition();
+        startCell = cellAt(cellPosition);
+        
+        setChanged();
+        notifyObservers(oldPosition);
+        setChanged();
+        notifyObservers(getArrowPosition());
+    }
+    
+    public void setArrowDirection(final ArrowDirection direction)
+    {
+        if (mode != Mode.EDIT)
+        {
+            return;
+        }
+        
+        startArrowDirection = direction;
+        
+        setChanged();
+        notifyObservers(getArrowPosition());
+    }
+    
+    private Cell getNeighbourCell(final Cell cell,
+            final ArrowDirection arrowDirection)
+    {
         switch (arrowDirection)
         {
-        case LEFT:
-            currentCell = currentCell.leftNeighbour;
-            break;
-
-        case RIGHT:
-            currentCell = currentCell.rightNeighbour;
-            break;
-
-        case UP:
-            currentCell = currentCell.upNeighbour;
-            break;
-
-        case DOWN:
-            currentCell = currentCell.downNeighbour;
-            break;
+        case RIGHT: return cell.rightNeighbour;
+        case DOWN: return cell.downNeighbour;
+        case LEFT: return cell.leftNeighbour;
+        case UP: return cell.upNeighbour;
         }
-
-        if (currentCell == null)// || currentCell.color == CellColor.NONE)
+        
+        return null;
+    }
+    
+    public void simGoForward()
+    {
+        if (mode != Mode.SIMULATE)
+        {
+            return;
+        }
+        
+        final CellPosition oldPosition = simCurrentCell.cellPosition;
+        simCurrentCell = getNeighbourCell(simCurrentCell, getArrowDirection());
+        
+        if (simCurrentCell == null)// || currentCell.color == CellColor.NONE)
         {
             throw new RuntimeException("Outside of the board");
         }
-
-        if (currentCell.hasStar)
+        
+        if (simCurrentCell.simHasStar)
         {
-            currentCell.hasStar = false;
-            nrStars--;
+            simCurrentCell.simHasStar = false;
+            simNrStars--;
 
-            if (nrStars == 0)
+            if (simNrStars == 0)
             {
                 throw new RuntimeException("Finished!");
             }
@@ -197,61 +333,40 @@ public class BoardModel extends Observable
         setChanged();
         notifyObservers(oldPosition);
         setChanged();
-        notifyObservers(currentCell.cellPosition);
+        notifyObservers(simCurrentCell.cellPosition);
     }
 
-    public void turnLeft()
+    public void simTurnLeft()
     {
-        switch (arrowDirection)
+        if (mode != Mode.SIMULATE)
         {
-        case LEFT:
-            arrowDirection = ArrowDirection.DOWN;
-            break;
-
-        case RIGHT:
-            arrowDirection = ArrowDirection.UP;
-            break;
-
-        case UP:
-            arrowDirection = ArrowDirection.LEFT;
-            break;
-
-        case DOWN:
-            arrowDirection = ArrowDirection.RIGHT;
-            break;
+            return;
         }
-
+        
+        simArrowDirection = simArrowDirection.turnLeft();
         setChanged();
-        notifyObservers(currentCell.cellPosition);
+        notifyObservers(simCurrentCell.cellPosition);
     }
 
-    public void turnRight()
+    public void simTurnRight()
     {
-        switch (arrowDirection)
+        if (mode != Mode.SIMULATE)
         {
-        case LEFT:
-            arrowDirection = ArrowDirection.UP;
-            break;
-
-        case RIGHT:
-            arrowDirection = ArrowDirection.DOWN;
-            break;
-
-        case UP:
-            arrowDirection = ArrowDirection.RIGHT;
-            break;
-
-        case DOWN:
-            arrowDirection = ArrowDirection.LEFT;
-            break;
+            return;
         }
-
+        
+        simArrowDirection = simArrowDirection.turnRight();
         setChanged();
-        notifyObservers(currentCell.cellPosition);
+        notifyObservers(simCurrentCell.cellPosition);
     }
 
     public void clear()
     {
+        if (mode == Mode.SIMULATE)
+        {
+            return;
+        }
+        
         for (int y = 0; y < height(); ++y)
         {
             for (int x = 0; x < width(); ++x)

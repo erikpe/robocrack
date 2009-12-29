@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-import robocrack.engine.board.BoardModel;
+import robocrack.engine.board.BoardSimulator;
 import robocrack.engine.board.Cell;
 import robocrack.engine.board.BoardModel.CellColor;
+import robocrack.engine.board.BoardModel.Mode;
 import robocrack.engine.program.Instruction;
 import robocrack.engine.program.InstructionPosition;
 import robocrack.engine.program.ProgramModel;
@@ -37,15 +38,15 @@ public class Simulator extends Observable
         }
     }
     
-    private final BoardModel boardModel;
+    private final BoardSimulator boardSimulator;
     private final ProgramModel programModel;
     
     private InstructionPosition programCounter;
     private List<InstructionPosition> stack;
     
-    public Simulator(final BoardModel boardModel, final ProgramModel programModel)
+    public Simulator(final BoardSimulator boardSimulator, final ProgramModel programModel)
     {
-        this.boardModel = boardModel;
+        this.boardSimulator = boardSimulator;
         this.programModel = programModel;
         
         this.programCounter = InstructionPosition.make(1, 0);
@@ -54,6 +55,11 @@ public class Simulator extends Observable
     
     public void step()
     {
+        if (boardSimulator.getMode() != Mode.SIMULATE)
+        {
+            boardSimulator.startSimulation();
+        }
+        
         final Instruction currentInstruction = programModel
                 .instructionAt(programCounter);
         
@@ -62,6 +68,8 @@ public class Simulator extends Observable
     
     public void reset()
     {
+        boardSimulator.resetSimulation();
+        
         while (!stack.isEmpty())
         {
             popStack();
@@ -72,7 +80,7 @@ public class Simulator extends Observable
     
     private void execute(final Instruction instruction)
     {
-        final Cell cell = boardModel.getCurrentCell();
+        final Cell cell = boardSimulator.getCurrentCell();
         
         if (skip(cell.getColor(), instruction.condition))
         {
@@ -87,32 +95,32 @@ public class Simulator extends Observable
             break;
             
         case GO_FORWARD:
-            boardModel.goForward();
+            boardSimulator.simGoForward();
             nextInstruction();
             break;
             
         case TURN_LEFT:
-            boardModel.turnLeft();
+            boardSimulator.simTurnLeft();
             nextInstruction();
             break;
             
         case TURN_RIGHT:
-            boardModel.turnRight();
+            boardSimulator.simTurnRight();
             nextInstruction();
             break;
             
         case PAINT_RED:
-            boardModel.setColor(cell.getCoordinate(), CellColor.RED);
+            boardSimulator.simPaintColor(CellColor.RED);
             nextInstruction();
             break;
             
         case PAINT_GREEN:
-            boardModel.setColor(cell.getCoordinate(), CellColor.GREEN);
+            boardSimulator.simPaintColor(CellColor.GREEN);
             nextInstruction();
             break;
             
         case PAINT_BLUE:
-            boardModel.setColor(cell.getCoordinate(), CellColor.BLUE);
+            boardSimulator.simPaintColor(CellColor.BLUE);
             nextInstruction();
             break;
             

@@ -7,26 +7,21 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-import robocrack.engine.program.ProgramModel;
 import robocrack.engine.simulator.Simulator;
-import robocrack.gui.GuiModel;
 
 @SuppressWarnings("serial")
 public class SimulatorButtonPane extends JComponent implements ActionListener
 {
     private static final int SPACING = 3;
     
-    private final ProgramModel programModel;
     private final Simulator simulator;
     
     private final JButton playPauseButton;
     private final JButton stepButton;
     private final JButton resetButton;
     
-    public SimulatorButtonPane(final ProgramModel programModel,
-            final GuiModel guiModel, final Simulator simulator)
+    public SimulatorButtonPane(final Simulator simulator)
     {
-        this.programModel = programModel;
         this.simulator = simulator;
         
         this.playPauseButton = new JButton("Play/Pause");

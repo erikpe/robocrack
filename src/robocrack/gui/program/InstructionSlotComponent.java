@@ -50,7 +50,7 @@ public class InstructionSlotComponent extends SquareComponent implements
     private void initialize()
     {
         label.setForeground(Color.WHITE);
-        label.setVisible(false);
+        updateLabel();
         add(label);
         
         programModel.addObserver(this);
@@ -70,7 +70,8 @@ public class InstructionSlotComponent extends SquareComponent implements
         return HEIGHT;
     }
     
-    private boolean isActive()
+    @Override
+    protected boolean isActive()
     {
         return programModel.isActive(position);
     }
@@ -86,18 +87,7 @@ public class InstructionSlotComponent extends SquareComponent implements
         return color;
     }
     
-    @Override
-    public void paintComponent(final Graphics g)
-    {
-        super.paintComponent(g);
-        paintLabel();
-        paintBlob(g);
-        paintArrow(g);
-        paintProgramCounter(g);
-        paintStackHighlight(g);
-    }
-    
-    private void paintLabel()
+    private void updateLabel()
     {
         final OpCode opCode = programModel.getOpCode(position);
         final String text = textFromOpCode(opCode);
@@ -118,6 +108,18 @@ public class InstructionSlotComponent extends SquareComponent implements
         
         label.setBounds(xBounds, yBounds, labelWidth, labelHeight);
         label.setVisible(true);
+    }
+    
+    @Override
+    public void paintComponent(final Graphics g)
+    {
+        paintBackground(g);
+        paintBorder(g);
+        paintBlob(g);
+        paintArrow(g);
+        paintProgramCounter(g);
+        paintStackHighlight(g);
+        paintLock(g);
     }
     
     private void paintBlob(final Graphics g)
@@ -358,11 +360,13 @@ public class InstructionSlotComponent extends SquareComponent implements
     {
         if (position.equals(arg))
         {
+            updateLabel();
             repaint();
         }
         else if (arg instanceof StackDepth && position.equals(simulator
                         .getStackPointerAt((StackDepth) arg)))
         {
+            updateLabel();
             repaint();
         }
     }

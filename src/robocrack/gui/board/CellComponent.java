@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Polygon;
 
-import robocrack.engine.board.BoardModel;
+import robocrack.engine.board.BoardEditor;
 import robocrack.engine.board.CellPosition;
 import robocrack.engine.board.BoardModel.ArrowDirection;
 import robocrack.engine.board.BoardModel.CellColor;
@@ -20,14 +20,14 @@ public class CellComponent extends SquareComponent
     final static int CELL_WIDTH = 21;
     final static int CELL_HEIGHT = CELL_WIDTH;
     
-    private final BoardModel board;
+    private final BoardEditor boardEditor;
     private final CellPosition cellPosition;
     private final GuiModel guiModel;
     
-    CellComponent(final BoardModel board, final CellPosition cellPosition,
+    CellComponent(final BoardEditor boardEditor, final CellPosition cellPosition,
             final GuiModel guiState)
     {
-        this.board = board;
+        this.boardEditor = boardEditor;
         this.cellPosition = cellPosition;
         this.guiModel = guiState;
         
@@ -49,7 +49,7 @@ public class CellComponent extends SquareComponent
     @Override
     protected Color getBackgroundColor()
     {
-        switch(board.getColor(cellPosition))
+        switch(boardEditor.getColor(cellPosition))
         {
         case NONE: return Color.LIGHT_GRAY;
         case RED: return Color.RED;
@@ -62,14 +62,15 @@ public class CellComponent extends SquareComponent
     @Override
     public void paintComponent(final Graphics g)
     {
-        super.paintComponent(g);
+        paintBackground(g);
+        paintBorder(g);
         paintArrow(g);
         paintStar(g);
     }
     
     private void paintStar(final Graphics g)
     {
-        if (!board.hasStar(cellPosition))
+        if (!boardEditor.hasStar(cellPosition))
         {
             return;
         }
@@ -82,12 +83,12 @@ public class CellComponent extends SquareComponent
     
     private void paintArrow(final Graphics g)
     {
-        if (!cellPosition.equals(board.arrowCoordinate()))
+        if (!cellPosition.equals(boardEditor.getArrowPosition()))
         {
             return;
         }
         
-        final Polygon arrowPolygon = getArrowPolygon(board.arrowDirection());
+        final Polygon arrowPolygon = getArrowPolygon(boardEditor.getArrowDirection());
         
         g.setColor(Color.YELLOW);
         g.fillPolygon(arrowPolygon);
@@ -115,7 +116,7 @@ public class CellComponent extends SquareComponent
     @Override
     protected void leftButtonPressed()
     {
-        guiModel.setStar(!board.hasStar(cellPosition));
+        guiModel.setStar(!boardEditor.hasStar(cellPosition));
         leftButtonAction();
     }
     
@@ -130,19 +131,19 @@ public class CellComponent extends SquareComponent
         switch(guiModel.selectedBoardButton())
         {
         case RED_BUTTON:
-            board.setColor(cellPosition, CellColor.RED);
+            boardEditor.setColor(cellPosition, CellColor.RED);
             break;
             
         case GREEN_BUTTON:
-            board.setColor(cellPosition, CellColor.GREEN);
+            boardEditor.setColor(cellPosition, CellColor.GREEN);
             break;
             
         case BLUE_BUTTON:
-            board.setColor(cellPosition, CellColor.BLUE);
+            boardEditor.setColor(cellPosition, CellColor.BLUE);
             break;
             
         case STAR_BUTTON:
-            board.setStar(cellPosition, guiModel.getStar());
+            boardEditor.setStar(cellPosition, guiModel.getStar());
             break;
             
         case ARROW_BUTTON:
@@ -165,18 +166,18 @@ public class CellComponent extends SquareComponent
     
     private void rightButtonAction()
     {
-        board.setColor(cellPosition, CellColor.NONE);
+        boardEditor.setColor(cellPosition, CellColor.NONE);
     }
     
     private void updateArrow()
     {
-        if (cellPosition.equals(board.arrowCoordinate()))
+        if (cellPosition.equals(boardEditor.getArrowPosition()))
         {
-            board.turnRight();
+            boardEditor.setArrowDirection(boardEditor.getArrowDirection().turnRight());
         }
         else
         {
-            board.setArrow(cellPosition);
+            boardEditor.setArrowPosition(cellPosition);
         }
     }
 }
