@@ -16,12 +16,6 @@ public class StackPane extends JComponent
     public StackPane(final Simulator simulator, final GuiModel guiModel,
             final int width, final int height)
     {
-        initialize(simulator, guiModel, width, height);
-    }
-    
-    private void initialize(final Simulator simulator, final GuiModel guiModel,
-            final int width, final int height)
-    {
         int stackDepth = 0;
         
         for (int y = 0; y < height; ++y)

@@ -6,7 +6,7 @@ import robocrack.gui.common.ButtonPane;
 import robocrack.gui.common.ToggleButton;
 
 @SuppressWarnings("serial")
-public class FunctionButtonPane extends ButtonPane<FunctionButton>
+public class FunctionButtonPane extends ButtonPane
 {
     private static final int BUTTON_WIDTH = 50;
     private static final int BUTTON_HEIGHT = 30;
@@ -20,46 +20,30 @@ public class FunctionButtonPane extends ButtonPane<FunctionButton>
     
     private void initialize(final GuiModel guiModel)
     {
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.FORWARD_BUTTON, "F", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.LEFT_BUTTON, "L", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.RIGHT_BUTTON, "R", null, guiModel));
+        addButton(new ToggleButton(FunctionButton.FORWARD_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.LEFT_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.RIGHT_BUTTON, guiModel));
         
         newRow();
         
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.F1_BUTTON, "F1", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.F2_BUTTON, "F2", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.F3_BUTTON, "F3", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.F4_BUTTON, "F4", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.F5_BUTTON, "F5", null, guiModel));
+        addButton(new ToggleButton(FunctionButton.F1_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.F2_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.F3_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.F4_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.F5_BUTTON, guiModel));
         
         newRow();
         
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.PAINT_RED_BUTTON, "PR", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.PAINT_GREEN_BUTTON, "PG", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.PAINT_BLUE_BUTTON, "PB", null, guiModel));
-
+        addButton(new ToggleButton(FunctionButton.PAINT_RED_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.PAINT_GREEN_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.PAINT_BLUE_BUTTON, guiModel));
+        
         newRow();
         
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.RED_BUTTON, "R", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.GREEN_BUTTON, "G", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.BLUE_BUTTON, "B", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.NO_COLOR_BUTTON, "NC", null, guiModel));
-        addButton(new ToggleButton<FunctionButton>(
-                FunctionButton.CLEAR_BUTTON, "C", null, guiModel));
+        addButton(new ToggleButton(FunctionButton.RED_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.GREEN_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.BLUE_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.NO_COLOR_BUTTON, guiModel));
+        addButton(new ToggleButton(FunctionButton.CLEAR_BUTTON, guiModel));
     }
 }

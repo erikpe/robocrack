@@ -4,16 +4,25 @@ import java.awt.Polygon;
 
 public class PolygonHelper
 {
-    public static enum Type
+    public static enum PolygonType
     {
-        LEFT_ARROW,
-        RIGHT_ARROW,
-        UP_ARROW,
-        DOWN_ARROW,
+        LEFT_ARROW(xLeftArrow, yLeftArrow),
+        RIGHT_ARROW(xRightArrow, yRightArrow),
+        UP_ARROW(xUpArrow, yUpArrow),
+        DOWN_ARROW(xDownArrow, yDownArrow),
         
-        GO_FORWARD,
-        TURN_LEFT,
-        TURN_RIGHT
+        GO_FORWARD(xGoForward, yGoForward),
+        TURN_LEFT(xTurnLeft, yTurnLeft),
+        TURN_RIGHT(xTurnRight, yTurnRight);
+        
+        final double[] x;
+        final double[] y;
+        
+        private PolygonType(final double[] x, final double[] y)
+        {
+            this.x = x;
+            this.y = y;
+        }
     }
     
     private static final double[] xLeftArrow = { .8, .8, .2 };
@@ -43,7 +52,8 @@ public class PolygonHelper
     private static final double[] yTurnRight =
         { .85, .3, .3, .15, .35, .55, .4, .4, .85 };
     
-    public static Polygon makePolygon(final Type type, int width, int height)
+    public static Polygon makePolygon(final PolygonType type, int width,
+            int height)
     {
         final int x = Math.max(0, (width - height) / 2);
         final int y = Math.max(0, (height - width) / 2);
@@ -51,32 +61,7 @@ public class PolygonHelper
         width = Math.min(width, height);
         height = width;
         
-        switch (type)
-        {
-        case LEFT_ARROW:
-            return makePolygon(xLeftArrow, yLeftArrow, x, y, width, height);
-            
-        case RIGHT_ARROW:
-            return makePolygon(xRightArrow, yRightArrow, x, y, width, height);
-            
-        case UP_ARROW:
-            return makePolygon(xUpArrow, yUpArrow, x, y, width, height);
-            
-        case DOWN_ARROW:
-            return makePolygon(xDownArrow, yDownArrow, x, y, width, height);
-            
-        case GO_FORWARD:
-            return makePolygon(xGoForward, yGoForward, x, y, width, height);
-            
-        case TURN_LEFT:
-            return makePolygon(xTurnLeft, yTurnLeft, x, y, width, height);
-            
-        case TURN_RIGHT:
-            return makePolygon(xTurnRight, yTurnRight, x, y, width, height);
-            
-        default:
-            return null;
-        }
+        return makePolygon(type.x, type.y, x, y, width, height);
     }
     
     private static Polygon makePolygon(final double[] xNorm,

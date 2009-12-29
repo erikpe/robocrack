@@ -44,7 +44,8 @@ public class Simulator extends Observable
     private InstructionPosition programCounter;
     private List<InstructionPosition> stack;
     
-    public Simulator(final BoardSimulator boardSimulator, final ProgramModel programModel)
+    public Simulator(final BoardSimulator boardSimulator,
+            final ProgramModel programModel)
     {
         this.boardSimulator = boardSimulator;
         this.programModel = programModel;

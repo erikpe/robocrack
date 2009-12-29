@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import javax.swing.JComponent;
 
 @SuppressWarnings("serial")
-public class ButtonPane<T extends Enum<?>> extends JComponent
+public class ButtonPane extends JComponent
 {
     private final int buttonWidth;
     private final int buttonHeight;
@@ -24,7 +24,7 @@ public class ButtonPane<T extends Enum<?>> extends JComponent
         setPreferredSize(new Dimension(0, 0));
     }
     
-    protected void addButton(final ToggleButton<T> button)
+    protected void addButton(final ToggleButton button)
     {
         add(button);
         

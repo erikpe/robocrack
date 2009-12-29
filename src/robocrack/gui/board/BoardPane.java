@@ -60,17 +60,13 @@ public class BoardPane extends JComponent implements Observer
         boardEditor.addObserver(this);
     }
     
-    private CellComponent cellComponentAt(final CellPosition cellPosition)
-    {
-        return cells[cellPosition.x][cellPosition.y];
-    }
-    
     @Override
     public void update(final Observable observable, final Object arg)
     {
         if (arg instanceof CellPosition)
         {
-            cellComponentAt((CellPosition) arg).repaint();
+            final CellPosition position = (CellPosition) arg;
+            cells[position.x][position.y].repaint();
         }
     }
 }

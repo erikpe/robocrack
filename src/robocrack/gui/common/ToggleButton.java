@@ -1,6 +1,5 @@
 package robocrack.gui.common;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
@@ -11,20 +10,17 @@ import javax.swing.JToggleButton;
 import robocrack.gui.GuiModel;
 
 @SuppressWarnings("serial")
-public class ToggleButton<T extends Enum<?>> extends JToggleButton implements
-        ActionListener, Observer
+public class ToggleButton extends JToggleButton implements ActionListener,
+        Observer
 {
-    private final T buttonEnum;
-    private final Color color;
+    private final Enum<?> buttonEnum;
     private final GuiModel guiModel;
     
-    public ToggleButton(final T buttonEnum, final String label,
-            final Color color, final GuiModel guiModel)
+    public ToggleButton(final Enum<?> buttonEnum, final GuiModel guiModel)
     {
-        super(label);
+        super(buttonEnum.toString());
         
         this.buttonEnum = buttonEnum;
-        this.color = color;
         this.guiModel = guiModel;
 
         initialize();
@@ -32,11 +28,6 @@ public class ToggleButton<T extends Enum<?>> extends JToggleButton implements
     
     private void initialize()
     {
-        if (color != null)
-        {
-            setBackground(color);
-        }
-        
         guiModel.addObserver(this);
         addActionListener(this);
         

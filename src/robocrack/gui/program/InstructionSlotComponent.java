@@ -18,7 +18,7 @@ import robocrack.gui.GuiModel;
 import robocrack.gui.GuiModel.FunctionButton;
 import robocrack.gui.common.SquareComponent;
 import robocrack.util.PolygonHelper;
-import robocrack.util.PolygonHelper.Type;
+import robocrack.util.PolygonHelper.PolygonType;
 
 @SuppressWarnings("serial")
 public class InstructionSlotComponent extends SquareComponent implements
@@ -27,7 +27,7 @@ public class InstructionSlotComponent extends SquareComponent implements
     static final int WIDTH = 33;
     static final int HEIGHT = WIDTH;
     
-    final InstructionPosition position;
+    private final InstructionPosition position;
     
     private final ProgramModel programModel;
     private final GuiModel guiModel;
@@ -119,7 +119,6 @@ public class InstructionSlotComponent extends SquareComponent implements
         paintArrow(g);
         paintProgramCounter(g);
         paintStackHighlight(g);
-        paintLock(g);
     }
     
     private void paintBlob(final Graphics g)
@@ -146,17 +145,20 @@ public class InstructionSlotComponent extends SquareComponent implements
     private void paintArrow(final Graphics g)
     {
         final OpCode opCode = programModel.getOpCode(position);
-        final Polygon arrow = getPolygonFromOpCode(opCode);
+        final PolygonType polygonType = polygonTypeFromOpCode(opCode);
         
-        if (arrow == null)
+        if (polygonType == null)
         {
             return;
         }
         
+        final Polygon polygon = PolygonHelper.makePolygon(polygonType, width(),
+                height());
+        
         g.setColor(Color.WHITE);
-        g.fillPolygon(arrow);
+        g.fillPolygon(polygon);
         g.setColor(Color.BLACK);
-        g.drawPolygon(arrow);
+        g.drawPolygon(polygon);
     }
     
     private void paintProgramCounter(final Graphics g)
@@ -204,16 +206,13 @@ public class InstructionSlotComponent extends SquareComponent implements
         return position.equals(pos);
     }
     
-    private Polygon getPolygonFromOpCode(final OpCode opCode)
+    private PolygonType polygonTypeFromOpCode(final OpCode opCode)
     {
         switch (opCode)
         {
-        case GO_FORWARD:
-            return PolygonHelper.makePolygon(Type.GO_FORWARD, width(), height());
-        case TURN_LEFT:
-            return PolygonHelper.makePolygon(Type.TURN_LEFT, width(), height());
-        case TURN_RIGHT:
-            return PolygonHelper.makePolygon(Type.TURN_RIGHT, width(), height());
+        case GO_FORWARD: return PolygonType.GO_FORWARD;
+        case TURN_LEFT: return PolygonType.TURN_LEFT;
+        case TURN_RIGHT: return PolygonType.TURN_RIGHT;
         default: return null;
         }
     }
@@ -259,17 +258,6 @@ public class InstructionSlotComponent extends SquareComponent implements
         }
         
         return null;
-    }
-    
-    @Override
-    protected Color getBorderColor()
-    {
-        if (isActive())
-        {
-            return super.getBorderColor();
-        }
-        
-        return Color.LIGHT_GRAY;
     }
     
     private OpCode opCodeFromButton(final FunctionButton button)

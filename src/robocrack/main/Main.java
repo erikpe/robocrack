@@ -14,7 +14,7 @@ public class Main
         final Simulator simulator = new Simulator(boardModel, programModel);
         
         final MainWindow window = new MainWindow(boardModel, programModel, simulator);
-        //final MainWindow window2 = new MainWindow(boardModel, programModel);
+        //final MainWindow window2 = new MainWindow(boardModel, programModel, simulator);
         window.setVisible(true);
         //window2.setVisible(true);
     }

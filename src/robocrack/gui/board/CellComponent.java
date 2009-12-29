@@ -1,7 +1,6 @@
 package robocrack.gui.board;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Polygon;
 
@@ -12,7 +11,7 @@ import robocrack.engine.board.BoardModel.CellColor;
 import robocrack.gui.GuiModel;
 import robocrack.gui.common.SquareComponent;
 import robocrack.util.PolygonHelper;
-import robocrack.util.PolygonHelper.Type;
+import robocrack.util.PolygonHelper.PolygonType;
 
 @SuppressWarnings("serial")
 public class CellComponent extends SquareComponent
@@ -30,8 +29,6 @@ public class CellComponent extends SquareComponent
         this.boardEditor = boardEditor;
         this.cellPosition = cellPosition;
         this.guiModel = guiState;
-        
-        setSize(new Dimension(width(), height()));
     }
     
     @Override
@@ -68,6 +65,24 @@ public class CellComponent extends SquareComponent
         paintStar(g);
     }
     
+    private void paintArrow(final Graphics g)
+    {
+        if (!cellPosition.equals(boardEditor.getArrowPosition()))
+        {
+            return;
+        }
+        
+        final PolygonType polygonType = getPolygonType(boardEditor
+                .getArrowDirection());
+        final Polygon polygon = PolygonHelper.makePolygon(polygonType, width(),
+                height());
+        
+        g.setColor(Color.YELLOW);
+        g.fillPolygon(polygon);
+        g.setColor(Color.BLACK);
+        g.drawPolygon(polygon);
+    }
+    
     private void paintStar(final Graphics g)
     {
         if (!boardEditor.hasStar(cellPosition))
@@ -81,35 +96,15 @@ public class CellComponent extends SquareComponent
         g.drawOval(width() / 3, height() / 3, width() / 3, height() / 3);
     }
     
-    private void paintArrow(final Graphics g)
-    {
-        if (!cellPosition.equals(boardEditor.getArrowPosition()))
-        {
-            return;
-        }
-        
-        final Polygon arrowPolygon = getArrowPolygon(boardEditor.getArrowDirection());
-        
-        g.setColor(Color.YELLOW);
-        g.fillPolygon(arrowPolygon);
-        g.setColor(Color.BLACK);
-        g.drawPolygon(arrowPolygon);
-    }
-    
-    private Polygon getArrowPolygon(final ArrowDirection direction)
+    private PolygonType getPolygonType(final ArrowDirection direction)
     {
         switch (direction)
         {
-        case LEFT:
-            return PolygonHelper.makePolygon(Type.LEFT_ARROW, width(), height());
-        case RIGHT:
-            return PolygonHelper.makePolygon(Type.RIGHT_ARROW, width(), height());
-        case UP:
-            return PolygonHelper.makePolygon(Type.UP_ARROW, width(), height());
-        case DOWN:
-            return PolygonHelper.makePolygon(Type.DOWN_ARROW, width(), height());
-        default:
-            return null;
+        case LEFT: return PolygonType.LEFT_ARROW;
+        case RIGHT: return PolygonType.RIGHT_ARROW;
+        case UP: return PolygonType.UP_ARROW;
+        case DOWN: return PolygonType.DOWN_ARROW;
+        default: return null;
         }
     }
     

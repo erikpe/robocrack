@@ -13,15 +13,16 @@ public class ProgramPane extends JComponent
 {
     private static final int SPACING = 3;
     
-    public ProgramPane(final ProgramModel programModel, final GuiModel guiModel, final Simulator simulator)
+    public ProgramPane(final ProgramModel programModel, final GuiModel guiModel,
+            final Simulator simulator)
     {
         int yBounds = 0;
         int maxWidth = 0;
         
-        for (int function = 1; function <= programModel.getMaxFunctions(); ++function)
+        for (int func = 1; func <= programModel.getMaxFunctions(); ++func)
         {
             final FunctionRowPane functionRowPane = new FunctionRowPane(
-                    programModel, guiModel, function, simulator);
+                    programModel, guiModel, func, simulator);
             
             final int width = functionRowPane.getPreferredSize().width;
             final int height = functionRowPane.getPreferredSize().height;

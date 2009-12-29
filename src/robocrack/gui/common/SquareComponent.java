@@ -115,19 +115,6 @@ public abstract class SquareComponent extends JComponent implements
         }
     }
     
-    protected void paintLock(final Graphics g)
-    {
-        if (true || !isActive() || !isLocked())
-        {
-            return;
-        }
-        
-        final Color color = Color.RED;
-        g.setColor(color);
-        g.drawLine(0, 0, width(), height());
-        g.drawLine(width(), 0, 0, height());
-    }
-    
     protected void leftButtonPressed() { }
     
     protected void leftButtonReleased() { }

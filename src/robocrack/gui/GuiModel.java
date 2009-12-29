@@ -9,34 +9,60 @@ public class GuiModel extends Observable
 {
     public static enum BoardButton
     {
-        RED_BUTTON,
-        BLUE_BUTTON,
-        GREEN_BUTTON,
-        STAR_BUTTON,
-        ARROW_BUTTON,
+        RED_BUTTON("R"),
+        GREEN_BUTTON("G"),
+        BLUE_BUTTON("B"),
+        STAR_BUTTON("S"),
+        ARROW_BUTTON("A");
+        
+        private final String string;
+        
+        private BoardButton(final String string)
+        {
+            this.string = string;
+        }
+        
+        @Override
+        public String toString()
+        {
+            return string;
+        }
     }
     
     public static enum FunctionButton
     {
-        FORWARD_BUTTON,
-        LEFT_BUTTON,
-        RIGHT_BUTTON,
+        FORWARD_BUTTON("F"),
+        LEFT_BUTTON("L"),
+        RIGHT_BUTTON("R"),
         
-        F1_BUTTON,
-        F2_BUTTON,
-        F3_BUTTON,
-        F4_BUTTON,
-        F5_BUTTON,
+        F1_BUTTON("F1"),
+        F2_BUTTON("F2"),
+        F3_BUTTON("F3"),
+        F4_BUTTON("F4"),
+        F5_BUTTON("F5"),
         
-        PAINT_RED_BUTTON,
-        PAINT_GREEN_BUTTON,
-        PAINT_BLUE_BUTTON,
+        PAINT_RED_BUTTON("PR"),
+        PAINT_GREEN_BUTTON("PG"),
+        PAINT_BLUE_BUTTON("PB"),
         
-        RED_BUTTON,
-        GREEN_BUTTON,
-        BLUE_BUTTON,
-        NO_COLOR_BUTTON,
-        CLEAR_BUTTON
+        RED_BUTTON("R"),
+        GREEN_BUTTON("G"),
+        BLUE_BUTTON("B"),
+        NO_COLOR_BUTTON("NC"),
+        CLEAR_BUTTON("C");
+        
+        private final String string;
+        
+        private FunctionButton(final String string)
+        {
+            this.string = string;
+        }
+        
+        @Override
+        public String toString()
+        {
+            return string;
+        }
     }
     
     private boolean star;
@@ -44,6 +70,7 @@ public class GuiModel extends Observable
     private FunctionButton selectedFunctionButton;
     private StackDepth stackDepthHighlight;
     private InstructionPosition instPosHighlight;
+    private boolean locked;
     
     GuiModel()
     {
@@ -53,6 +80,12 @@ public class GuiModel extends Observable
         
         this.stackDepthHighlight = null;
         this.instPosHighlight = null;
+        this.locked = false;
+    }
+    
+    public boolean isLocked(final Enum<?> buttonEnum)
+    {
+        return locked;
     }
     
     public boolean isSelected(final Enum<?> buttonEnum)
@@ -157,5 +190,32 @@ public class GuiModel extends Observable
     public InstructionPosition getInstPosHighlight()
     {
         return instPosHighlight;
+    }
+    
+    private void notifyAllButtons()
+    {
+        for (final BoardButton button : BoardButton.values())
+        {
+            setChanged();
+            notifyObservers(button);
+        }
+        
+        for (final FunctionButton button : FunctionButton.values())
+        {
+            setChanged();
+            notifyObservers(button);
+        }
+    }
+    
+    public void lockForSimulation()
+    {
+        locked = true;
+        notifyAllButtons();
+    }
+    
+    public void unlock()
+    {
+        locked = false;
+        notifyAllButtons();
     }
 }
