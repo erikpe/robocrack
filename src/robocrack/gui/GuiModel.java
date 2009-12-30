@@ -70,7 +70,6 @@ public class GuiModel extends Observable
     private FunctionButton selectedFunctionButton;
     private StackDepth stackDepthHighlight;
     private InstructionPosition instPosHighlight;
-    private boolean locked;
     
     GuiModel()
     {
@@ -80,12 +79,6 @@ public class GuiModel extends Observable
         
         this.stackDepthHighlight = null;
         this.instPosHighlight = null;
-        this.locked = false;
-    }
-    
-    public boolean isLocked(final Enum<?> buttonEnum)
-    {
-        return locked;
     }
     
     public boolean isSelected(final Enum<?> buttonEnum)
@@ -190,32 +183,5 @@ public class GuiModel extends Observable
     public InstructionPosition getInstPosHighlight()
     {
         return instPosHighlight;
-    }
-    
-    private void notifyAllButtons()
-    {
-        for (final BoardButton button : BoardButton.values())
-        {
-            setChanged();
-            notifyObservers(button);
-        }
-        
-        for (final FunctionButton button : FunctionButton.values())
-        {
-            setChanged();
-            notifyObservers(button);
-        }
-    }
-    
-    public void lockForSimulation()
-    {
-        locked = true;
-        notifyAllButtons();
-    }
-    
-    public void unlock()
-    {
-        locked = false;
-        notifyAllButtons();
     }
 }

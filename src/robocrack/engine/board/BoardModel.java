@@ -47,7 +47,7 @@ public class BoardModel extends Observable implements BoardEditor,
         }
     }
     
-    public static enum Mode
+    private enum Mode
     {
         EDIT,
         SIMULATE
@@ -61,7 +61,6 @@ public class BoardModel extends Observable implements BoardEditor,
     private final int height;
     
     private Mode mode;
-    
     private final Cell[][] board;
     
     private ArrowDirection startArrowDirection;
@@ -124,11 +123,6 @@ public class BoardModel extends Observable implements BoardEditor,
         }
 
         return tmpBoard;
-    }
-    
-    public Mode getMode()
-    {
-        return mode;
     }
     
     public void startSimulation()

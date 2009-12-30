@@ -7,16 +7,29 @@ import java.util.Observer;
 
 import javax.swing.JButton;
 
-import robocrack.engine.program.InstructionPosition;
 import robocrack.engine.program.ProgramModel;
+import robocrack.engine.simulator.Simulator.SimulatorState;
 
 @SuppressWarnings("serial")
 public class PlusMinusButton extends JButton implements Observer, ActionListener
 {
     static enum PlusMinus
     {
-        PLUS,
-        MINUS
+        PLUS("+"),
+        MINUS("-");
+        
+        private final String string;
+        
+        private PlusMinus(final String string)
+        {
+            this.string = string;
+        }
+        
+        @Override
+        public String toString()
+        {
+            return string;
+        }
     }
     
     private final ProgramModel programModel;
@@ -26,7 +39,7 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
     PlusMinusButton(final ProgramModel programModel, final int function,
             final PlusMinus plusMinus)
     {
-        super(plusMinus == PlusMinus.PLUS ? "+" : "-");
+        super(plusMinus.toString());
         
         this.programModel = programModel;
         this.function = function;
@@ -40,21 +53,24 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
     
     private void update()
     {
-        switch(plusMinus)
+        if (programModel.isLocked())
         {
-        case PLUS:
+            setEnabled(false);
+        }
+        else if (plusMinus == PlusMinus.PLUS)
+        {
             setEnabled(enablePlus());
-            break;
-            
-        case MINUS:
+        }
+        else
+        {
             setEnabled(enableMinus());
-            break;
         }
     }
     
     private boolean enablePlus()
     {
-        if (programModel.getFunctionLength(function) == programModel.getMaxFunctionLength())
+        if (programModel.getFunctionLength(function)
+                == programModel.getMaxFunctionLength())
         {
             return false;
         }
@@ -116,13 +132,9 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
     @Override
     public void update(final Observable observable, final Object arg)
     {
-        if (arg instanceof InstructionPosition)
+        if (arg instanceof SimulatorState)
         {
-            final InstructionPosition argPosition = (InstructionPosition) arg;
-            if (Math.abs(argPosition.function - function) <= 1)
-            {
-                update();
-            }
+            update();
         }
     }
 }

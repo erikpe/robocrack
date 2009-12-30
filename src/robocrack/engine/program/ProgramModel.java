@@ -2,6 +2,8 @@ package robocrack.engine.program;
 
 import java.util.Observable;
 
+import robocrack.engine.simulator.Simulator.SimulatorState;
+
 public class ProgramModel extends Observable
 {
     public static enum OpCode
@@ -39,12 +41,14 @@ public class ProgramModel extends Observable
     private final int[] functionLength;
     private final Instruction[][] program;
     private InstructionPosition programCounter;
+    private SimulatorState state;
     
     public ProgramModel()
     {
         this.functionLength = new int[MAX_FUNCTIONS];
         this.program = new Instruction[MAX_FUNCTIONS][];
         this.programCounter = InstructionPosition.make(1, 0);
+        this.state = SimulatorState.RESET;
         
         initialize();
     }
@@ -89,6 +93,11 @@ public class ProgramModel extends Observable
     
     public void setFunctionLength(final int function, int newLength)
     {
+        if (isLocked())
+        {
+            return;
+        }
+        
         newLength = Math.max(0, newLength);
         newLength = Math.min(getMaxFunctionLength(), newLength);
         
@@ -115,6 +124,9 @@ public class ProgramModel extends Observable
         {
             clear(InstructionPosition.make(function, slot));
         }
+        
+        setChanged();
+        notifyObservers(this);
     }
     
     public boolean isActive(final InstructionPosition position)
@@ -135,6 +147,11 @@ public class ProgramModel extends Observable
     public void setOpCode(final InstructionPosition position,
             final OpCode opCode)
     {
+        if (isLocked())
+        {
+            return;
+        }
+        
         instructionAt(position).opCode = opCode;
         
         setChanged();
@@ -144,6 +161,11 @@ public class ProgramModel extends Observable
     public void setCondition(final InstructionPosition position,
             final Condition condition)
     {
+        if (isLocked())
+        {
+            return;
+        }
+        
         instructionAt(position).condition = condition;
         
         setChanged();
@@ -152,6 +174,11 @@ public class ProgramModel extends Observable
     
     public void clear(final InstructionPosition position)
     {
+        if (isLocked())
+        {
+            return;
+        }
+        
         setOpCode(position, OpCode.NOP);
         setCondition(position, Condition.ON_ALL);
     }
@@ -159,5 +186,18 @@ public class ProgramModel extends Observable
     public InstructionPosition getProgramCounter()
     {
         return programCounter;
+    }
+    
+    public void setState(final SimulatorState newState)
+    {
+        state = newState;
+        
+        setChanged();
+        notifyObservers(state);
+    }
+    
+    public boolean isLocked()
+    {
+        return state != SimulatorState.RESET;
     }
 }

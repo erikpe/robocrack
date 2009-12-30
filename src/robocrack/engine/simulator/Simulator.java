@@ -7,7 +7,6 @@ import java.util.Observable;
 import robocrack.engine.board.BoardSimulator;
 import robocrack.engine.board.Cell;
 import robocrack.engine.board.BoardModel.CellColor;
-import robocrack.engine.board.BoardModel.Mode;
 import robocrack.engine.program.Instruction;
 import robocrack.engine.program.InstructionPosition;
 import robocrack.engine.program.ProgramModel;
@@ -15,6 +14,13 @@ import robocrack.engine.program.ProgramModel.Condition;
 
 public class Simulator extends Observable
 {
+    public static enum SimulatorState
+    {
+        RESET,
+        RUNNING,
+        HALTED;
+    }
+    
     public static class StackDepth
     {
         public final int intValue;
@@ -43,6 +49,7 @@ public class Simulator extends Observable
     
     private InstructionPosition programCounter;
     private List<InstructionPosition> stack;
+    private SimulatorState state;
     
     public Simulator(final BoardSimulator boardSimulator,
             final ProgramModel programModel)
@@ -52,13 +59,19 @@ public class Simulator extends Observable
         
         this.programCounter = InstructionPosition.make(1, 0);
         this.stack = new ArrayList<InstructionPosition>();
+        this.state = SimulatorState.RESET;
     }
     
     public void step()
     {
-        if (boardSimulator.getMode() != Mode.SIMULATE)
+        if (getState() == SimulatorState.HALTED)
+        {
+            return;
+        }
+        else if (getState() == SimulatorState.RESET)
         {
             boardSimulator.startSimulation();
+            setState(SimulatorState.RUNNING);
         }
         
         final Instruction currentInstruction = programModel
@@ -69,7 +82,10 @@ public class Simulator extends Observable
     
     public void reset()
     {
-        boardSimulator.resetSimulation();
+        if (getState() != SimulatorState.RESET)
+        {
+            setState(SimulatorState.RESET);
+        }
         
         while (!stack.isEmpty())
         {
@@ -77,6 +93,8 @@ public class Simulator extends Observable
         }
         
         jumpTo(InstructionPosition.make(1, 0));
+        
+        boardSimulator.resetSimulation();
     }
     
     private void execute(final Instruction instruction)
@@ -165,21 +183,36 @@ public class Simulator extends Observable
         jumpTo(InstructionPosition.make(function, 0));
     }
     
-    private void nextInstruction()
+    private InstructionPosition nextPosition(final InstructionPosition position)
     {
-        InstructionPosition newPosition = InstructionPosition.make(
-                programCounter.function, programCounter.slot + 1);
+        final int func = position.function;
+        final int slot = position.slot + 1;
         
-        while (newPosition.slot >= programModel
-                .getFunctionLength(newPosition.function)
-                && !stack.isEmpty())
+        if (slot >= programModel.getFunctionLength(func))
         {
-            final InstructionPosition poppedPosition = popStack();
-            newPosition = InstructionPosition.make(poppedPosition.function,
-                    poppedPosition.slot + 1);
+            return null;
         }
         
-        jumpTo(newPosition);
+        return InstructionPosition.make(func, slot);
+    }
+    
+    private void nextInstruction()
+    {
+        InstructionPosition newPosition = nextPosition(programCounter);
+        
+        while (newPosition == null && !stack.isEmpty())
+        {
+            newPosition = nextPosition(popStack());
+        }
+        
+        if (newPosition == null)
+        {
+            setState(SimulatorState.HALTED);
+        }
+        else
+        {
+            jumpTo(newPosition);
+        }
     }
     
     private void jumpTo(final InstructionPosition newPosition)
@@ -225,5 +258,20 @@ public class Simulator extends Observable
         }
         
         return null;
+    }
+    
+    public SimulatorState getState()
+    {
+        return state;
+    }
+    
+    private void setState(final SimulatorState newState)
+    {
+        state = newState;
+        
+        setChanged();
+        notifyObservers(getState());
+        
+        programModel.setState(getState());
     }
 }

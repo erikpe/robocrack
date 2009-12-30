@@ -3,14 +3,18 @@ package robocrack.gui.simulator;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import robocrack.engine.simulator.Simulator;
+import robocrack.engine.simulator.Simulator.SimulatorState;
 
 @SuppressWarnings("serial")
-public class SimulatorButtonPane extends JComponent implements ActionListener
+public class SimulatorButtonPane extends JComponent implements ActionListener,
+        Observer
 {
     private static final int SPACING = 3;
     
@@ -45,7 +49,9 @@ public class SimulatorButtonPane extends JComponent implements ActionListener
         stepButton.addActionListener(this);
         resetButton.addActionListener(this);
         
-        playPauseButton.setEnabled(false);
+        update();
+        
+        simulator.addObserver(this);
     }
     
     private int addButton(final JButton button, final int xBounds)
@@ -70,6 +76,22 @@ public class SimulatorButtonPane extends JComponent implements ActionListener
         else if (e.getSource() == resetButton)
         {
             simulator.reset();
+        }
+    }
+    
+    private void update()
+    {
+        playPauseButton.setEnabled(false);
+        stepButton.setEnabled(simulator.getState() != SimulatorState.HALTED);
+        resetButton.setEnabled(simulator.getState() != SimulatorState.RESET);
+    }
+    
+    @Override
+    public void update(final Observable observable, final Object arg)
+    {
+        if (arg instanceof SimulatorState)
+        {
+            update();
         }
     }
 }

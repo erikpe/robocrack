@@ -16,6 +16,7 @@ public abstract class SquareComponent extends JComponent implements
     private static final Color DEFAULT_BORDER_COLOR = Color.BLACK;
     private static final Color DEFAULT_INACTIVE_COLOR = null;
     private static final Color DEFAULT_INACTIVE_BORDER_COLOR = Color.LIGHT_GRAY;
+    private static final Color DEFAULT_LOCK_COLOR = Color.RED;
     
     private boolean isHighlighted = false;
     
@@ -56,6 +57,11 @@ public abstract class SquareComponent extends JComponent implements
     protected Color getInactiveBorderColor()
     {
         return DEFAULT_INACTIVE_BORDER_COLOR;
+    }
+    
+    protected Color getLockColor()
+    {
+        return DEFAULT_LOCK_COLOR;
     }
     
     protected Color highlightColor(final Color color)

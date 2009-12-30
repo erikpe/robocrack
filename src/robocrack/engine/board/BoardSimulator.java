@@ -1,7 +1,6 @@
 package robocrack.engine.board;
 
 import robocrack.engine.board.BoardModel.CellColor;
-import robocrack.engine.board.BoardModel.Mode;
 
 public interface BoardSimulator extends BoardViewer
 {
@@ -10,8 +9,6 @@ public interface BoardSimulator extends BoardViewer
     public void simTurnLeft();
 
     public void simTurnRight();
-
-    public Mode getMode();
 
     public void startSimulation();
     

@@ -4,9 +4,6 @@ import robocrack.engine.board.BoardModel.CellColor;
 
 public class Cell
 {
-    final int x;
-    final int y;
-    
     Cell leftNeighbour = null;
     Cell rightNeighbour = null;
     Cell upNeighbour = null;
@@ -22,9 +19,6 @@ public class Cell
     
     Cell(final CellPosition cellPosition)
     {
-        this.x = cellPosition.x;
-        this.y = cellPosition.y;
-        
         this.color = CellColor.NONE;
         this.simColor = CellColor.NONE;
         

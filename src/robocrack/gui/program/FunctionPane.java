@@ -14,8 +14,8 @@ public class FunctionPane extends JComponent
 {
     private static final int SPACING = 3;
     
-    public FunctionPane(final ProgramModel programModel,
-            final GuiModel guiModel, final int function, final Simulator simulator)
+    public FunctionPane(final ProgramModel programModel, final GuiModel guiModel,
+            final int function, final Simulator simulator)
     {
         int xBounds = 0;
         
