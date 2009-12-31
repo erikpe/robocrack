@@ -308,20 +308,10 @@ public class BoardModel extends Observable implements BoardEditor,
         final CellPosition oldPosition = simCurrentCell.cellPosition;
         simCurrentCell = getNeighbourCell(simCurrentCell, getArrowDirection());
         
-        if (simCurrentCell == null)// || currentCell.color == CellColor.NONE)
-        {
-            throw new RuntimeException("Outside of the board");
-        }
-        
         if (simCurrentCell.simHasStar)
         {
             simCurrentCell.simHasStar = false;
             simNrStars--;
-
-            if (simNrStars == 0)
-            {
-                throw new RuntimeException("Finished!");
-            }
         }
         
         setChanged();

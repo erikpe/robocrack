@@ -66,7 +66,12 @@ public class BoardPane extends JComponent implements Observer
         if (arg instanceof CellPosition)
         {
             final CellPosition position = (CellPosition) arg;
-            cells[position.x][position.y].repaint();
+            
+            if (position.x >= 0 && position.x < cells.length && position.y >= 0
+                    && position.y < cells[position.x].length)
+            {
+                cells[position.x][position.y].repaint();
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
     private static final int SPACING = 3;
     
     private final Simulator simulator;
+    private final SimulatorRunner simulatorRunner;
     
     private final JButton playPauseButton;
     private final JButton stepButton;
@@ -27,6 +28,7 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
     public SimulatorButtonPane(final Simulator simulator)
     {
         this.simulator = simulator;
+        this.simulatorRunner = new SimulatorRunner(simulator);
         
         this.playPauseButton = new JButton("Play/Pause");
         this.stepButton = new JButton("Step");
@@ -46,6 +48,7 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
         final int height = playPauseButton.getPreferredSize().height;
         setPreferredSize(new Dimension(xBounds, height));
         
+        playPauseButton.addActionListener(this);
         stepButton.addActionListener(this);
         resetButton.addActionListener(this);
         
@@ -69,19 +72,23 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
     @Override
     public void actionPerformed(final ActionEvent e)
     {
+        if (e.getSource() == playPauseButton)
+        {
+            simulatorRunner.playPause();
+        }
         if (e.getSource() == stepButton)
         {
-            simulator.step();
+            simulatorRunner.step();
         }
         else if (e.getSource() == resetButton)
         {
-            simulator.reset();
+            simulatorRunner.reset();
         }
     }
     
     private void update()
     {
-        playPauseButton.setEnabled(false);
+        playPauseButton.setEnabled(simulator.getState() != SimulatorState.HALTED);
         stepButton.setEnabled(simulator.getState() != SimulatorState.HALTED);
         resetButton.setEnabled(simulator.getState() != SimulatorState.RESET);
     }

@@ -4,10 +4,20 @@ import robocrack.engine.board.BoardModel.CellColor;
 
 public class Cell
 {
-    Cell leftNeighbour = null;
-    Cell rightNeighbour = null;
-    Cell upNeighbour = null;
-    Cell downNeighbour = null;
+    public static final Cell NO_CELL = new Cell(CellPosition.make(-1, -1));
+    
+    static
+    {
+        NO_CELL.leftNeighbour = NO_CELL;
+        NO_CELL.rightNeighbour = NO_CELL;
+        NO_CELL.upNeighbour = NO_CELL;
+        NO_CELL.downNeighbour = NO_CELL;
+    }
+    
+    Cell leftNeighbour;
+    Cell rightNeighbour;
+    Cell upNeighbour;
+    Cell downNeighbour;
     
     final CellPosition cellPosition;
     
@@ -26,6 +36,11 @@ public class Cell
         this.simHasStar = false;
         
         this.cellPosition = cellPosition;
+        
+        this.leftNeighbour = NO_CELL;
+        this.rightNeighbour = NO_CELL;
+        this.upNeighbour = NO_CELL;
+        this.downNeighbour = NO_CELL;
     }
     
     public CellPosition getCoordinate()

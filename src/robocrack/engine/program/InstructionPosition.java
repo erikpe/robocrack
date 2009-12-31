@@ -18,11 +18,6 @@ public class InstructionPosition
     
     public static InstructionPosition make(final int function, final int slot)
     {
-        if (function < 0 || slot < 0)
-        {
-            throw new IndexOutOfBoundsException();
-        }
-        
         return cache.get(new InstructionPosition(function, slot));
     }
     

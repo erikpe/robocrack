@@ -18,11 +18,6 @@ public final class CellPosition
     
     public static CellPosition make(final int x, final int y)
     {
-        if (x < 0 || y < 0)
-        {
-            throw new IndexOutOfBoundsException();
-        }
-        
         return cache.get(new CellPosition(x, y));
     }
     

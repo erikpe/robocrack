@@ -11,6 +11,7 @@ import robocrack.engine.program.Instruction;
 import robocrack.engine.program.InstructionPosition;
 import robocrack.engine.program.ProgramModel;
 import robocrack.engine.program.ProgramModel.Condition;
+import robocrack.engine.program.ProgramModel.OpCode;
 
 public class Simulator extends Observable
 {
@@ -57,7 +58,7 @@ public class Simulator extends Observable
         this.boardSimulator = boardSimulator;
         this.programModel = programModel;
         
-        this.programCounter = InstructionPosition.make(1, 0);
+        this.programCounter = null;
         this.stack = new ArrayList<InstructionPosition>();
         this.state = SimulatorState.RESET;
     }
@@ -70,14 +71,23 @@ public class Simulator extends Observable
         }
         else if (getState() == SimulatorState.RESET)
         {
-            boardSimulator.startSimulation();
             setState(SimulatorState.RUNNING);
+            
+            boardSimulator.startSimulation();
+            nextInstruction(InstructionPosition.make(1, -1));
+            
+            if (boardSimulator.getCurrentCell().getColor() == CellColor.NONE)
+            {
+                setState(SimulatorState.HALTED);
+            }
         }
+        else
+        {
+            final Instruction currentInstruction = programModel
+                    .instructionAt(programCounter);
         
-        final Instruction currentInstruction = programModel
-                .instructionAt(programCounter);
-        
-        execute(currentInstruction);
+            execute(currentInstruction);
+        }
     }
     
     public void reset()
@@ -92,8 +102,7 @@ public class Simulator extends Observable
             popStack();
         }
         
-        jumpTo(InstructionPosition.make(1, 0));
-        
+        jumpTo(null);
         boardSimulator.resetSimulation();
     }
     
@@ -109,60 +118,57 @@ public class Simulator extends Observable
         
         switch (instruction.opCode)
         {
-        case NOP:
-            nextInstruction();
-            break;
-            
-        case GO_FORWARD:
-            boardSimulator.simGoForward();
-            nextInstruction();
-            break;
-            
-        case TURN_LEFT:
-            boardSimulator.simTurnLeft();
-            nextInstruction();
-            break;
-            
-        case TURN_RIGHT:
-            boardSimulator.simTurnRight();
-            nextInstruction();
-            break;
-            
-        case PAINT_RED:
-            boardSimulator.simPaintColor(CellColor.RED);
-            nextInstruction();
-            break;
-            
-        case PAINT_GREEN:
-            boardSimulator.simPaintColor(CellColor.GREEN);
-            nextInstruction();
-            break;
-            
-        case PAINT_BLUE:
-            boardSimulator.simPaintColor(CellColor.BLUE);
-            nextInstruction();
-            break;
-            
-        case CALL_F1:
-            call(1);
-            break;
-            
-        case CALL_F2:
-            call(2);
-            break;
-            
-        case CALL_F3:
-            call(3);
-            break;
-            
-        case CALL_F4:
-            call(4);
-            break;
-            
-        case CALL_F5:
-            call(5);
-            break;
+        case NOP: nextInstruction(); break;
+        case GO_FORWARD: goForward(); break;
+        case TURN_LEFT: turnLeft(); break;
+        case TURN_RIGHT: turnRight(); break;
+        case PAINT_RED: paint(CellColor.RED); break;
+        case PAINT_GREEN: paint(CellColor.GREEN); break;
+        case PAINT_BLUE: paint(CellColor.BLUE); break;
+        case CALL_F1: call(1); break;
+        case CALL_F2: call(2); break;
+        case CALL_F3: call(3); break;
+        case CALL_F4: call(4); break;
+        case CALL_F5: call(5); break;
         }
+    }
+    
+    private void goForward()
+    {
+        boardSimulator.simGoForward();
+        
+        if (boardSimulator.getCurrentCell().getColor() == CellColor.NONE)
+        {
+            setState(SimulatorState.HALTED);
+        }
+        else
+        {
+            nextInstruction();
+        }
+    }
+    
+    private void turnLeft()
+    {
+        boardSimulator.simTurnLeft();
+        nextInstruction();
+    }
+    
+    private void turnRight()
+    {
+        boardSimulator.simTurnRight();
+        nextInstruction();
+    }
+    
+    private void paint(final CellColor color)
+    {
+        boardSimulator.simPaintColor(color);
+        nextInstruction();
+    }
+    
+    private void call(final int function)
+    {
+        pushStack();
+        nextInstruction(InstructionPosition.make(function, -1));
     }
     
     private boolean skip(final CellColor cellColor, final Condition condition)
@@ -177,12 +183,6 @@ public class Simulator extends Observable
         }
     }
     
-    private void call(final int function)
-    {
-        pushStack();
-        jumpTo(InstructionPosition.make(function, 0));
-    }
-    
     private InstructionPosition nextPosition(final InstructionPosition position)
     {
         final int func = position.function;
@@ -193,12 +193,24 @@ public class Simulator extends Observable
             return null;
         }
         
-        return InstructionPosition.make(func, slot);
+        final InstructionPosition newPos = InstructionPosition.make(func, slot);
+        
+        if (programModel.getOpCode(newPos) == OpCode.NOP)
+        {
+            return nextPosition(newPos);
+        }
+        
+        return newPos;
     }
     
     private void nextInstruction()
     {
-        InstructionPosition newPosition = nextPosition(programCounter);
+        nextInstruction(getProgramCounter());
+    }
+    
+    private void nextInstruction(final InstructionPosition position)
+    {
+        InstructionPosition newPosition = nextPosition(position);
         
         while (newPosition == null && !stack.isEmpty())
         {
@@ -209,10 +221,8 @@ public class Simulator extends Observable
         {
             setState(SimulatorState.HALTED);
         }
-        else
-        {
-            jumpTo(newPosition);
-        }
+        
+        jumpTo(newPosition);
     }
     
     private void jumpTo(final InstructionPosition newPosition)
@@ -220,18 +230,28 @@ public class Simulator extends Observable
         final InstructionPosition oldPosition = programCounter;
         programCounter = newPosition;
         
-        setChanged();
-        notifyObservers(oldPosition);
-        setChanged();
-        notifyObservers(newPosition);
+        if (oldPosition != null)
+        {
+            setChanged();
+            notifyObservers(oldPosition);
+        }
+        
+        if (newPosition != null)
+        {
+            setChanged();
+            notifyObservers(newPosition);
+        }
     }
     
     private void pushStack()
     {
-        stack.add(programCounter);
+        if (nextPosition(getProgramCounter()) != null)
+        {
+            stack.add(getProgramCounter());
         
-        setChanged();
-        notifyObservers(new StackDepth(stack.size() - 1));
+            setChanged();
+            notifyObservers(new StackDepth(stack.size() - 1));
+        }
     }
     
     private InstructionPosition popStack()
