@@ -7,7 +7,7 @@ import java.util.Observer;
 
 import javax.swing.JToggleButton;
 
-import robocrack.engine.program.ProgramModel;
+import robocrack.engine.simulator.Simulator;
 import robocrack.engine.simulator.Simulator.SimulatorState;
 import robocrack.gui.GuiModel;
 
@@ -17,16 +17,16 @@ public class ToggleButton extends JToggleButton implements ActionListener,
 {
     private final Enum<?> buttonEnum;
     private final GuiModel guiModel;
-    private final ProgramModel programModel;
+    private final Simulator simulator;
     
     public ToggleButton(final Enum<?> buttonEnum, final GuiModel guiModel,
-            final ProgramModel programModel)
+            final Simulator simulator)
     {
         super(buttonEnum.toString());
         
         this.buttonEnum = buttonEnum;
         this.guiModel = guiModel;
-        this.programModel = programModel;
+        this.simulator = simulator;
 
         initialize();
     }
@@ -34,7 +34,7 @@ public class ToggleButton extends JToggleButton implements ActionListener,
     private void initialize()
     {
         guiModel.addObserver(this);
-        programModel.addObserver(this);
+        simulator.addObserver(this);
         addActionListener(this);
         
         setSelected(guiModel.isSelected(buttonEnum));
@@ -49,7 +49,7 @@ public class ToggleButton extends JToggleButton implements ActionListener,
     private void update()
     {
         setSelected(guiModel.isSelected(buttonEnum));
-        setEnabled(!programModel.isLocked());
+        setEnabled(simulator.getState() == SimulatorState.RESET);
     }
     
     @Override

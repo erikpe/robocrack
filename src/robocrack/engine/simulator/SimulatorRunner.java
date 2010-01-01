@@ -1,12 +1,12 @@
-package robocrack.gui.simulator;
+package robocrack.engine.simulator;
 
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import robocrack.engine.simulator.Simulator;
 import robocrack.engine.simulator.Simulator.SimulatorState;
+
 
 public class SimulatorRunner implements Observer
 {
@@ -21,7 +21,7 @@ public class SimulatorRunner implements Observer
         simulator.addObserver(this);
     }
     
-    void playPause()
+    synchronized public void playPause()
     {
         if (stepTimer == null)
         {
@@ -33,13 +33,13 @@ public class SimulatorRunner implements Observer
         }
     }
     
-    void step()
+    synchronized public void step()
     {
         stopTimer();
         simulator.step();
     }
     
-    void reset()
+    synchronized public void reset()
     {
         stopTimer();
         simulator.reset();
@@ -72,7 +72,7 @@ public class SimulatorRunner implements Observer
     }
     
     @Override
-    public void update(final Observable observable, final Object arg)
+    synchronized public void update(final Observable observable, final Object arg)
     {
         if (arg == SimulatorState.HALTED || arg == SimulatorState.RESET)
         {

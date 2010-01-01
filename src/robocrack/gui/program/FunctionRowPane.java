@@ -82,7 +82,7 @@ public class FunctionRowPane extends JComponent implements Observer
     private int addPlusMinus(final int xBounds, final PlusMinus plusMinus)
     {
         final PlusMinusButton button = new PlusMinusButton(programModel,
-                function, plusMinus);
+                function, plusMinus, simulator);
         final int width = button.getPreferredSize().width;
         final int height = InstructionSlotComponent.HEIGHT;
         add(button);

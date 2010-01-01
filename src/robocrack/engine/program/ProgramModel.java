@@ -2,6 +2,7 @@ package robocrack.engine.program;
 
 import java.util.Observable;
 
+import robocrack.engine.simulator.Simulator;
 import robocrack.engine.simulator.Simulator.SimulatorState;
 
 public class ProgramModel extends Observable
@@ -41,14 +42,13 @@ public class ProgramModel extends Observable
     private final int[] functionLength;
     private final Instruction[][] program;
     private InstructionPosition programCounter;
-    private SimulatorState state;
+    private Simulator simulator;
     
     public ProgramModel()
     {
         this.functionLength = new int[MAX_FUNCTIONS];
         this.program = new Instruction[MAX_FUNCTIONS][];
         this.programCounter = InstructionPosition.make(1, 0);
-        this.state = SimulatorState.RESET;
         
         initialize();
     }
@@ -188,16 +188,18 @@ public class ProgramModel extends Observable
         return programCounter;
     }
     
-    public void setState(final SimulatorState newState)
-    {
-        state = newState;
-        
-        setChanged();
-        notifyObservers(state);
-    }
-    
     public boolean isLocked()
     {
-        return state != SimulatorState.RESET;
+        if (simulator != null)
+        {
+            return simulator.getState() != SimulatorState.RESET;
+        }
+        
+        return false;
+    }
+    
+    public void setSimulator(final Simulator simulator)
+    {
+        this.simulator = simulator;
     }
 }

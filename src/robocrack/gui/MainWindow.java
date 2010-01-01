@@ -22,10 +22,10 @@ public class MainWindow extends JFrame
         final GuiModel guiModel = new GuiModel();
         
         final BoardButtonPane boardButtonPane = new BoardButtonPane(guiModel,
-                programModel);
+                simulator);
         final BoardPane boardPane = new BoardPane(boardModel, guiModel);
         final FunctionButtonPane functionButtonPane = new FunctionButtonPane(
-                guiModel, programModel);
+                guiModel, simulator);
         final ProgramPane programPane = new ProgramPane(programModel, guiModel,
                 simulator);
         final SimulatorButtonPane simButtonPane = new SimulatorButtonPane(

@@ -8,6 +8,7 @@ import java.util.Observer;
 import javax.swing.JButton;
 
 import robocrack.engine.program.ProgramModel;
+import robocrack.engine.simulator.Simulator;
 import robocrack.engine.simulator.Simulator.SimulatorState;
 
 @SuppressWarnings("serial")
@@ -37,7 +38,7 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
     private final PlusMinus plusMinus;
     
     PlusMinusButton(final ProgramModel programModel, final int function,
-            final PlusMinus plusMinus)
+            final PlusMinus plusMinus, final Simulator simulator)
     {
         super(plusMinus.toString());
         
@@ -45,7 +46,7 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
         this.function = function;
         this.plusMinus = plusMinus;
         
-        programModel.addObserver(this);
+        simulator.addObserver(this);
         addActionListener(this);
         
         update();

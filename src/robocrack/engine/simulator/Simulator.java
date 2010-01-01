@@ -45,6 +45,7 @@ public class Simulator extends Observable
         }
     }
     
+    private final SimulatorRunner simulatorRunner;
     private final BoardSimulator boardSimulator;
     private final ProgramModel programModel;
     
@@ -55,15 +56,18 @@ public class Simulator extends Observable
     public Simulator(final BoardSimulator boardSimulator,
             final ProgramModel programModel)
     {
+        this.simulatorRunner = new SimulatorRunner(this);
         this.boardSimulator = boardSimulator;
         this.programModel = programModel;
         
         this.programCounter = null;
         this.stack = new ArrayList<InstructionPosition>();
         this.state = SimulatorState.RESET;
+        
+        programModel.setSimulator(this);
     }
     
-    public void step()
+    void step()
     {
         if (getState() == SimulatorState.HALTED)
         {
@@ -90,7 +94,7 @@ public class Simulator extends Observable
         }
     }
     
-    public void reset()
+    void reset()
     {
         if (getState() != SimulatorState.RESET)
         {
@@ -291,7 +295,10 @@ public class Simulator extends Observable
         
         setChanged();
         notifyObservers(getState());
-        
-        programModel.setState(getState());
+    }
+    
+    public SimulatorRunner getRunner()
+    {
+        return simulatorRunner;
     }
 }
