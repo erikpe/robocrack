@@ -19,7 +19,6 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
     private static final int SPACING = 3;
     
     private final Simulator simulator;
-    //private final SimulatorRunner simulatorRunner;
     
     private final JButton playPauseButton;
     private final JButton stepButton;
@@ -28,7 +27,6 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
     public SimulatorButtonPane(final Simulator simulator)
     {
         this.simulator = simulator;
-        //this.simulatorRunner = new SimulatorRunner(simulator);
         
         this.playPauseButton = new JButton("Play/Pause");
         this.stepButton = new JButton("Step");
