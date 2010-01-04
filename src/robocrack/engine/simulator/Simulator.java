@@ -52,6 +52,7 @@ public class Simulator extends Observable
     private InstructionPosition programCounter;
     private List<InstructionPosition> stack;
     private SimulatorState state;
+    private boolean useTailCallOptimization;
     
     public Simulator(final BoardSimulator boardSimulator,
             final ProgramModel programModel)
@@ -63,6 +64,7 @@ public class Simulator extends Observable
         this.programCounter = null;
         this.stack = new ArrayList<InstructionPosition>();
         this.state = SimulatorState.RESET;
+        this.useTailCallOptimization = true;
         
         programModel.setSimulator(this);
     }
@@ -249,7 +251,7 @@ public class Simulator extends Observable
     
     private void pushStack()
     {
-        if (nextPosition(getProgramCounter()) != null)
+        if (nextPosition(getProgramCounter()) != null || !useTailCallOptimization)
         {
             stack.add(getProgramCounter());
         
@@ -300,5 +302,18 @@ public class Simulator extends Observable
     public SimulatorRunner getRunner()
     {
         return simulatorRunner;
+    }
+    
+    public boolean getTailCallOptimization()
+    {
+        return useTailCallOptimization;
+    }
+    
+    public void setTailCallOptimization(final boolean optimize)
+    {
+        useTailCallOptimization = optimize;
+        
+        setChanged();
+        notifyObservers();
     }
 }

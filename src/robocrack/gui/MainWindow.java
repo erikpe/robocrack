@@ -11,6 +11,7 @@ import robocrack.gui.board.BoardPane;
 import robocrack.gui.program.FunctionButtonPane;
 import robocrack.gui.program.ProgramPane;
 import robocrack.gui.simulator.SimulatorButtonPane;
+import robocrack.gui.simulator.SimulatorSettings;
 import robocrack.gui.simulator.StackPane;
 
 @SuppressWarnings("serial")
@@ -30,6 +31,7 @@ public class MainWindow extends JFrame
                 simulator);
         final SimulatorButtonPane simButtonPane = new SimulatorButtonPane(
                 simulator);
+        final SimulatorSettings simSettings = new SimulatorSettings(simulator);
         final StackPane stackPane = new StackPane(simulator, guiModel, 15, 3);
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -42,6 +44,7 @@ public class MainWindow extends JFrame
         getContentPane().add(functionButtonPane);
         getContentPane().add(programPane);
         getContentPane().add(simButtonPane);
+        getContentPane().add(simSettings);
         getContentPane().add(stackPane);
         
         pack();
