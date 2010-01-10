@@ -47,6 +47,8 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
         this.plusMinus = plusMinus;
         
         simulator.addObserver(this);
+        programModel.addObserver(this);
+        
         addActionListener(this);
         
         update();
@@ -133,7 +135,7 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
     @Override
     public void update(final Observable observable, final Object arg)
     {
-        if (arg instanceof SimulatorState)
+        if (arg instanceof SimulatorState || observable == programModel)
         {
             update();
         }

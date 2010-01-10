@@ -7,6 +7,8 @@ import java.util.Observer;
 
 import javax.swing.JToggleButton;
 
+import robocrack.engine.program.ProgramModel;
+import robocrack.engine.program.ProgramModel.OpCode;
 import robocrack.engine.simulator.Simulator;
 import robocrack.engine.simulator.Simulator.SimulatorState;
 import robocrack.gui.GuiModel;
@@ -16,17 +18,22 @@ public class ToggleButton extends JToggleButton implements ActionListener,
         Observer
 {
     private final Enum<?> buttonEnum;
+    private final OpCode opCode;
     private final GuiModel guiModel;
     private final Simulator simulator;
+    private final ProgramModel programModel;
     
-    public ToggleButton(final Enum<?> buttonEnum, final GuiModel guiModel,
-            final Simulator simulator)
+    public ToggleButton(final Enum<?> buttonEnum, final OpCode opCode,
+            final GuiModel guiModel, final Simulator simulator,
+            final ProgramModel programModel)
     {
         super(buttonEnum.toString());
         
         this.buttonEnum = buttonEnum;
+        this.opCode = opCode;
         this.guiModel = guiModel;
         this.simulator = simulator;
+        this.programModel = programModel;
 
         initialize();
     }
@@ -35,9 +42,15 @@ public class ToggleButton extends JToggleButton implements ActionListener,
     {
         guiModel.addObserver(this);
         simulator.addObserver(this);
+        
+        if (programModel != null)
+        {
+            programModel.addObserver(this);
+        }
+        
         addActionListener(this);
         
-        setSelected(guiModel.isSelected(buttonEnum));
+        update();
     }
     
     @Override
@@ -49,13 +62,26 @@ public class ToggleButton extends JToggleButton implements ActionListener,
     private void update()
     {
         setSelected(guiModel.isSelected(buttonEnum));
-        setEnabled(simulator.getState() == SimulatorState.RESET);
+        
+        if (programModel != null && opCode != null)
+        {
+            setEnabled(programModel.isAllowed(opCode)
+                    && simulator.getState() == SimulatorState.RESET);
+        }
+        else
+        {
+            setEnabled(simulator.getState() == SimulatorState.RESET);
+        }
     }
     
     @Override
     public void update(final Observable observable, final Object arg)
     {
         if (buttonEnum == arg || arg instanceof SimulatorState)
+        {
+            update();
+        }
+        else if (observable == programModel && arg == null)
         {
             update();
         }

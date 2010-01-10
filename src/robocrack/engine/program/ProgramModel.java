@@ -1,5 +1,6 @@
 package robocrack.engine.program;
 
+import java.util.EnumSet;
 import java.util.Observable;
 
 import robocrack.engine.simulator.Simulator;
@@ -43,18 +44,25 @@ public class ProgramModel extends Observable
     private final Instruction[][] program;
     private InstructionPosition programCounter;
     private Simulator simulator;
+    private final EnumSet<OpCode> allowedOpCodes;
     
     public ProgramModel()
     {
         this.functionLength = new int[MAX_FUNCTIONS];
         this.program = new Instruction[MAX_FUNCTIONS][];
         this.programCounter = InstructionPosition.make(1, 0);
+        this.allowedOpCodes = EnumSet.allOf(OpCode.class);
         
         initialize();
     }
     
     private void initialize()
     {
+        allowedOpCodes.remove(OpCode.PAINT_RED);
+        allowedOpCodes.remove(OpCode.PAINT_GREEN);
+        allowedOpCodes.remove(OpCode.PAINT_BLUE);
+        updateCallFunctions();
+        
         for (int i = 0; i < MAX_FUNCTIONS; ++i)
         {
             functionLength[i] = 0;
@@ -69,6 +77,69 @@ public class ProgramModel extends Observable
         
         setFunctionLength(1, 3);
         setFunctionLength(2, 3);
+    }
+    
+    private void updateCallFunctions()
+    {
+        setAllowed(OpCode.CALL_F2, getFunctionLength(2) > 0);
+        setAllowed(OpCode.CALL_F3, getFunctionLength(3) > 0);
+        setAllowed(OpCode.CALL_F4, getFunctionLength(4) > 0);
+        setAllowed(OpCode.CALL_F5, getFunctionLength(5) > 0);
+    }
+    
+    public void setAllowed(final OpCode opCode, final boolean allowed)
+    {
+        if (isLocked())
+        {
+            setChanged();
+            notifyObservers();
+            
+            return;
+        }
+        
+        if (allowed)
+        {
+            allow(opCode);
+        }
+        else
+        {
+            disallow(opCode);
+        }
+    }
+    
+    private void allow(final OpCode opCode)
+    {
+        allowedOpCodes.add(opCode);
+        
+        setChanged();
+        notifyObservers();
+    }
+    
+    private void disallow(final OpCode opCode)
+    {
+        allowedOpCodes.remove(opCode);
+        
+        for (int function = 1; function < getMaxFunctions(); ++function)
+        {
+            for (int slot = 0; slot < getFunctionLength(function); ++slot)
+            {
+                final InstructionPosition pos = InstructionPosition.make(
+                        function, slot);
+                
+                if (getOpCode(pos) == opCode)
+                {
+                    setOpCode(pos, OpCode.NOP);
+                }
+            }
+        }
+        
+        setChanged();
+        notifyObservers();
+    }
+    
+    public boolean isAllowed(final OpCode opCode)
+    {
+        return allowedOpCodes.contains(opCode);
     }
     
     public final Instruction instructionAt(final InstructionPosition position)
@@ -125,6 +196,11 @@ public class ProgramModel extends Observable
             clear(InstructionPosition.make(function, slot));
         }
         
+        if (oldLength != newLength && (oldLength == 0 || newLength == 0))
+        {
+            updateCallFunctions();
+        }
+        
         setChanged();
         notifyObservers(this);
     }
@@ -147,7 +223,7 @@ public class ProgramModel extends Observable
     public void setOpCode(final InstructionPosition position,
             final OpCode opCode)
     {
-        if (isLocked())
+        if (isLocked() || !isAllowed(opCode))
         {
             return;
         }

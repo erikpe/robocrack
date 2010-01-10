@@ -17,10 +17,10 @@ public class BoardButtonPane extends ButtonPane
     {
         super(BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_SPACING);
         
-        addButton(new ToggleButton(BoardButton.RED_BUTTON, guiModel, simulator));
-        addButton(new ToggleButton(BoardButton.GREEN_BUTTON, guiModel, simulator));
-        addButton(new ToggleButton(BoardButton.BLUE_BUTTON, guiModel, simulator));
-        addButton(new ToggleButton(BoardButton.STAR_BUTTON, guiModel, simulator));
-        addButton(new ToggleButton(BoardButton.ARROW_BUTTON, guiModel, simulator));
+        addButton(new ToggleButton(BoardButton.RED_BUTTON, null, guiModel, simulator, null));
+        addButton(new ToggleButton(BoardButton.GREEN_BUTTON, null, guiModel, simulator, null));
+        addButton(new ToggleButton(BoardButton.BLUE_BUTTON, null, guiModel, simulator, null));
+        addButton(new ToggleButton(BoardButton.STAR_BUTTON, null, guiModel, simulator, null));
+        addButton(new ToggleButton(BoardButton.ARROW_BUTTON, null, guiModel, simulator, null));
     }
 }
