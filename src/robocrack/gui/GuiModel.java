@@ -9,11 +9,11 @@ public class GuiModel extends Observable
 {
     public static enum BoardButton
     {
-        RED_BUTTON("R"),
-        GREEN_BUTTON("G"),
-        BLUE_BUTTON("B"),
-        STAR_BUTTON("S"),
-        ARROW_BUTTON("A");
+        RED_BUTTON("Red"),
+        GREEN_BUTTON("Green"),
+        BLUE_BUTTON("Blue"),
+        STAR_BUTTON("Star"),
+        ARROW_BUTTON("Arrow");
         
         private final String string;
         
@@ -31,9 +31,9 @@ public class GuiModel extends Observable
     
     public static enum FunctionButton
     {
-        FORWARD_BUTTON("F"),
-        LEFT_BUTTON("L"),
-        RIGHT_BUTTON("R"),
+        FORWARD_BUTTON("Forward"),
+        LEFT_BUTTON("Left"),
+        RIGHT_BUTTON("Right"),
         
         F1_BUTTON("F1"),
         F2_BUTTON("F2"),
@@ -41,15 +41,15 @@ public class GuiModel extends Observable
         F4_BUTTON("F4"),
         F5_BUTTON("F5"),
         
-        PAINT_RED_BUTTON("PR"),
-        PAINT_GREEN_BUTTON("PG"),
-        PAINT_BLUE_BUTTON("PB"),
+        PAINT_RED_BUTTON("Paint Red"),
+        PAINT_GREEN_BUTTON("Paint Green"),
+        PAINT_BLUE_BUTTON("Paint Blue"),
         
-        RED_BUTTON("R"),
-        GREEN_BUTTON("G"),
-        BLUE_BUTTON("B"),
-        NO_COLOR_BUTTON("NC"),
-        CLEAR_BUTTON("C");
+        RED_BUTTON("On Red"),
+        GREEN_BUTTON("On Green"),
+        BLUE_BUTTON("On Blue"),
+        NO_COLOR_BUTTON("No Color"),
+        CLEAR_BUTTON("Clear");
         
         private final String string;
         

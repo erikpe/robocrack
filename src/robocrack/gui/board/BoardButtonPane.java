@@ -9,13 +9,11 @@ import robocrack.gui.common.ToggleButton;
 @SuppressWarnings("serial")
 public class BoardButtonPane extends ButtonPane
 {
-    private static final int BUTTON_WIDTH = 50;
-    private static final int BUTTON_HEIGHT = 30;
     private static final int BUTTON_SPACING = 3;
     
     public BoardButtonPane(final GuiModel guiModel, final Simulator simulator)
     {
-        super(BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_SPACING);
+        super(BUTTON_SPACING);
         
         addButton(new ToggleButton(BoardButton.RED_BUTTON, null, guiModel, simulator, null));
         addButton(new ToggleButton(BoardButton.GREEN_BUTTON, null, guiModel, simulator, null));

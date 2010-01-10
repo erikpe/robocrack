@@ -11,14 +11,12 @@ import robocrack.gui.common.ToggleButton;
 @SuppressWarnings("serial")
 public class FunctionButtonPane extends ButtonPane
 {
-    private static final int BUTTON_WIDTH = 50;
-    private static final int BUTTON_HEIGHT = 30;
     private static final int BUTTON_SPACING = 3;
     
     public FunctionButtonPane(final GuiModel guiModel,
             final Simulator simulator, final ProgramModel programModel)
     {
-        super(BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_SPACING);
+        super(BUTTON_SPACING);
         
         addButton(new ToggleButton(FunctionButton.FORWARD_BUTTON, OpCode.GO_FORWARD, guiModel, simulator, programModel));
         addButton(new ToggleButton(FunctionButton.LEFT_BUTTON, OpCode.TURN_LEFT, guiModel, simulator, programModel));
