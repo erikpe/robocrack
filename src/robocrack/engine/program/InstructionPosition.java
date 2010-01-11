@@ -48,4 +48,10 @@ public class InstructionPosition
         final InstructionPosition otherPosition = (InstructionPosition) other;
         return function == otherPosition.function && slot == otherPosition.slot;
     }
+    
+     @Override
+     public int hashCode()
+     {
+         return (function << 16) ^ slot;
+     }
 }

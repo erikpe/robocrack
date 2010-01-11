@@ -7,10 +7,23 @@ public class Instruction
 {
     public OpCode opCode;
     public Condition condition;
+    public int id;
     
-    Instruction(final OpCode opCode, final Condition condition)
+    public Instruction(final OpCode opCode, final Condition condition)
+    {
+        this(opCode, condition, 0);
+    }
+    
+    public Instruction(final OpCode opCode, final Condition condition, final int id)
     {
         this.opCode = opCode;
         this.condition = condition;
+        this.id = id;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "<" + opCode + ", " + condition + ">";
     }
 }

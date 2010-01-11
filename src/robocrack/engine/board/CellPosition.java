@@ -48,4 +48,10 @@ public final class CellPosition
         final CellPosition otherPosition = (CellPosition) other;
         return x == otherPosition.x && y == otherPosition.y;
     }
+    
+    @Override
+    public int hashCode()
+    {
+        return (y << 16) ^ x;
+    }
 }

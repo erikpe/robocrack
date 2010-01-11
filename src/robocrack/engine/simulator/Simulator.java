@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import robocrack.engine.board.BoardModel;
 import robocrack.engine.board.BoardSimulator;
 import robocrack.engine.board.Cell;
 import robocrack.engine.board.BoardModel.CellColor;
+import robocrack.engine.fastsimulator.FastSimulator;
 import robocrack.engine.program.Instruction;
 import robocrack.engine.program.InstructionPosition;
 import robocrack.engine.program.ProgramModel;
@@ -315,5 +317,28 @@ public class Simulator extends Observable
         
         setChanged();
         notifyObservers();
+    }
+    
+    public void bruteForce()
+    {
+        final FastSimulator fastSimulator = new FastSimulator(
+                (BoardModel) boardSimulator, programModel);
+        
+        final Instruction[][] solution = fastSimulator.bruteForce();
+        
+        if (solution != null)
+        {
+            for (int func = 0; func < solution.length; ++func)
+            {
+                for (int slot = 0; slot < solution[func].length; ++slot)
+                {
+                    final InstructionPosition pos = InstructionPosition.make(
+                            func + 1, slot);
+                    
+                    programModel.setCondition(pos, solution[func][slot].condition);
+                    programModel.setOpCode(pos, solution[func][slot].opCode);
+                }
+            }
+        }
     }
 }

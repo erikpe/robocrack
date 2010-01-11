@@ -9,6 +9,7 @@ import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import robocrack.engine.fastsimulator.FastSimulator;
 import robocrack.engine.simulator.Simulator;
 import robocrack.engine.simulator.Simulator.SimulatorState;
 
@@ -23,6 +24,7 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
     private final JButton playPauseButton;
     private final JButton stepButton;
     private final JButton resetButton;
+    private final JButton bruteForce;
     
     public SimulatorButtonPane(final Simulator simulator)
     {
@@ -31,6 +33,7 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
         this.playPauseButton = new JButton("Play/Pause");
         this.stepButton = new JButton("Step");
         this.resetButton = new JButton("Reset");
+        this.bruteForce = new JButton("Brute Force");
 
         initialize();
     }
@@ -42,6 +45,7 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
         xBounds = addButton(playPauseButton, xBounds);
         xBounds = addButton(stepButton, xBounds + SPACING);
         xBounds = addButton(resetButton, xBounds + SPACING);
+        xBounds = addButton(bruteForce, xBounds + SPACING);
         
         final int height = playPauseButton.getPreferredSize().height;
         setPreferredSize(new Dimension(xBounds, height));
@@ -49,6 +53,7 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
         playPauseButton.addActionListener(this);
         stepButton.addActionListener(this);
         resetButton.addActionListener(this);
+        bruteForce.addActionListener(this);
         
         update();
         
@@ -81,6 +86,10 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
         else if (e.getSource() == resetButton)
         {
             simulator.getRunner().reset();
+        }
+        else if (e.getSource() == bruteForce)
+        {
+            simulator.bruteForce();
         }
     }
     
