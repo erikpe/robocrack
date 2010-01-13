@@ -1,7 +1,8 @@
 package robocrack.engine.fastsimulator;
 
+import java.util.HashMap;
+
 import robocrack.engine.board.BoardModel;
-import robocrack.engine.board.BoardModel.ArrowDirection;
 import robocrack.engine.fastsimulator.FastBoard.Cell;
 import robocrack.engine.program.Instruction;
 import robocrack.engine.program.ProgramModel;
@@ -9,14 +10,19 @@ import robocrack.engine.program.ProgramModel.Condition;
 
 public class FastSimulator
 {
+    private static final int MAX_SIMSTEPS = 1000;
+    
     private final ProgramGenerator programGenerator;
     private final FastBoard fastBoard;
     
     private final Instruction[][] program;
     private final Cell[] board;
     
-    private final int[] funcStack = new int[1024];
-    private final int[] slotStack = new int[1024];
+    private final int[] funcStack = new int[MAX_SIMSTEPS];
+    private final int[] slotStack = new int[MAX_SIMSTEPS];
+    private final int[][] stateStack = new int[MAX_SIMSTEPS][MAX_SIMSTEPS + 1];
+    
+    private HashMap<Integer, Object> stateSet;
     
     public FastSimulator(final BoardModel boardModel,
             final ProgramModel programModel)
@@ -31,14 +37,36 @@ public class FastSimulator
     public Instruction[][] bruteForce()
     {
         final long startTime = System.currentTimeMillis();
+        long lastPrint = startTime;
         
-        int testedPrograms = 0;
+        long testedPrograms = 0;
         long simsteps = 0;
         
         do
         {
             simsteps += simulate();
             testedPrograms++;
+            
+            if (testedPrograms % 1000 == 0)
+            {
+                long now = System.currentTimeMillis();
+                
+                if (now - lastPrint > 5000.0)
+                {
+                    final double time = (now - startTime) / 1000.0;
+                    
+                    System.out.println(testedPrograms + " tried in " + time
+                            + " sec (" + (testedPrograms / time) + " progs/s)");
+                    
+                    System.out.println("Total number of simulation steps: "
+                            + simsteps + " (" + (simsteps / time)
+                            + " steps/s, avg: "
+                            + (((double) simsteps) / testedPrograms)
+                            + " steps/prog)");
+                    
+                    lastPrint = now;
+                }
+            }
             
             if (fastBoard.starsLeft == 0)
             {
@@ -50,7 +78,7 @@ public class FastSimulator
                         + (testedPrograms / time) + " progs/s)");
                 
                 System.out.println("Total number of simulation steps: "
-                        + simsteps + " (" + (((double) simsteps) / time)
+                        + simsteps + " (" + (simsteps / time)
                         + " steps/s, avg: "
                         + (((double) simsteps) / testedPrograms)
                         + " steps/prog)");
@@ -82,7 +110,7 @@ public class FastSimulator
     private int simulate()
     {
         int arrowPos = 0;
-        ArrowDirection arrowDir = fastBoard.arrowDirection;
+        int arrowDir = fastBoard.arrowDirection;
         
         int pcFunc = 0;
         int pcSlot = 0;
@@ -93,19 +121,32 @@ public class FastSimulator
         Condition condition;
         int callFun;
         
+        int state;
+        stateStack[0][0] = 1;
+        
+        stateSet = new HashMap<Integer, Object>();
+        
         while (true)
         {
-            simsteps++;
+            state = arrowPos ^ (arrowDir << 12) ^ (pcFunc << 14)
+                    ^ (pcSlot << 17);
             
-            if (simsteps > 100)
+            if (stateSet.containsKey(state))
             {
                 return simsteps;
             }
             
-            condition = program[pcFunc][pcSlot].condition;
+            stateStack[stackPtr][stateStack[stackPtr][0]++] = state;
+            stateSet.put(state, null);
+            
+            if (++simsteps == MAX_SIMSTEPS)
+            {
+                return simsteps;
+            }
             
             callFun = -1;
             
+            condition = program[pcFunc][pcSlot].condition;
             if (condition == Condition.ON_ALL || condition == board[arrowPos].color)
             {
                 switch (program[pcFunc][pcSlot].opCode)
@@ -113,10 +154,10 @@ public class FastSimulator
                 case GO_FORWARD:
                     switch (arrowDir)
                     {
-                    case UP: arrowPos = board[arrowPos].up; break;
-                    case DOWN: arrowPos = board[arrowPos].down; break;
-                    case LEFT: arrowPos = board[arrowPos].left; break;
-                    case RIGHT: arrowPos = board[arrowPos].right; break;
+                    case 0: arrowPos = board[arrowPos].up; break;
+                    case 1: arrowPos = board[arrowPos].right; break;
+                    case 2: arrowPos = board[arrowPos].down; break;
+                    case 3: arrowPos = board[arrowPos].left; break;
                     }
                     
                     if (arrowPos < 0)
@@ -138,25 +179,11 @@ public class FastSimulator
                     break;
                     
                 case TURN_LEFT:
-                    switch (arrowDir)
-                    {
-                    case UP: arrowDir = ArrowDirection.LEFT; break;
-                    case DOWN: arrowDir = ArrowDirection.RIGHT; break;
-                    case LEFT: arrowDir = ArrowDirection.DOWN; break;
-                    case RIGHT: arrowDir = ArrowDirection.UP; break;
-                    }
-                    
+                    arrowDir = (arrowDir + 3) % 4;
                     break;
                 
                 case TURN_RIGHT:
-                    switch (arrowDir)
-                    {
-                    case UP: arrowDir = ArrowDirection.RIGHT; break;
-                    case DOWN: arrowDir = ArrowDirection.LEFT; break;
-                    case LEFT: arrowDir = ArrowDirection.UP; break;
-                    case RIGHT: arrowDir = ArrowDirection.DOWN; break;
-                    }
-                    
+                    arrowDir = (arrowDir + 1) % 4;
                     break;
                     
                 case CALL_F1:
@@ -189,6 +216,11 @@ public class FastSimulator
                 {
                     if (stackPtr > 0)
                     {
+                        while (stateStack[stackPtr][0] > 1)
+                        {
+                            stateSet.remove(stateStack[stackPtr][--stateStack[stackPtr][0]]);
+                        }
+                        
                         pcSlot = slotStack[--stackPtr];
                         pcFunc = funcStack[stackPtr];
                     }
@@ -204,6 +236,8 @@ public class FastSimulator
                 {
                     slotStack[stackPtr] = pcSlot;
                     funcStack[stackPtr++] = pcFunc;
+                    
+                    stateStack[stackPtr][0] = 1;
                 }
                 
                 pcSlot = 0;

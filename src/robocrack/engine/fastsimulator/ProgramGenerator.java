@@ -44,6 +44,22 @@ public class ProgramGenerator
     
     public final void nextProgram()
     {
+//        program[0][0] = new Instruction(OpCode.CALL_F2, Condition.ON_ALL);
+//        program[0][1] = new Instruction(OpCode.CALL_F1, Condition.ON_ALL);
+//        program[1][0] = new Instruction(OpCode.GO_FORWARD, Condition.ON_ALL);
+//        program[1][1] = new Instruction(OpCode.CALL_F2, Condition.ON_BLUE);
+//        program[1][2] = new Instruction(OpCode.CALL_F3, Condition.ON_ALL);
+//        program[2][0] = new Instruction(OpCode.GO_FORWARD, Condition.ON_ALL);
+//        program[2][1] = new Instruction(OpCode.CALL_F3, Condition.ON_BLUE);
+//        program[2][2] = new Instruction(OpCode.TURN_LEFT, Condition.ON_ALL);
+        
+//        program[0][0] = new Instruction(OpCode.GO_FORWARD, Condition.ON_BLUE);
+//        program[0][1] = new Instruction(OpCode.TURN_RIGHT, Condition.ON_RED);
+//        program[0][2] = new Instruction(OpCode.CALL_F2, Condition.ON_ALL);
+//        program[1][0] = new Instruction(OpCode.TURN_RIGHT, Condition.ON_RED);
+//        program[1][1] = new Instruction(OpCode.GO_FORWARD, Condition.ON_RED);
+//        program[1][2] = new Instruction(OpCode.CALL_F1, Condition.ON_BLUE);
+        
         for (int funcNr = 0; funcNr < program.length; ++funcNr)
         {
             for (int slot = 0; slot < program[funcNr].length; ++slot)

@@ -25,9 +25,11 @@ public class FastBoard
         public Condition color;
         public boolean hasStar;
         
+        public final CellPosition pos;
+        
         private Cell(final int up, final int down, final int left,
                 final int right, final Condition origColor,
-                final boolean origHasStar)
+                final boolean origHasStar, final CellPosition pos)
         {
             this.up = up;
             this.down = down;
@@ -39,12 +41,14 @@ public class FastBoard
             
             this.color = origColor;
             this.hasStar = origHasStar;
+            
+            this.pos = pos;
         }
     }
     
     public final Cell[] board;
     public final int numStars;
-    public final ArrowDirection arrowDirection;
+    public final int arrowDirection;
     
     public final int[] takenStars;
     public int starsLeft;
@@ -53,10 +57,22 @@ public class FastBoard
     {
         this.board = genBoard(boardModel);
         this.numStars = numStars();
-        this.arrowDirection = boardModel.getArrowDirection();
+        this.arrowDirection = arrowDirectionNum(boardModel.getArrowDirection());
         
         this.takenStars = new int[numStars];
         this.starsLeft = numStars;
+    }
+    
+    private int arrowDirectionNum(final ArrowDirection direction)
+    {
+        switch (direction)
+        {
+        case UP: return 0;
+        case RIGHT: return 1;
+        case DOWN: return 2;
+        case LEFT: return 3;
+        default: return -1;
+        }
     }
     
     private Cell[] genBoard(final BoardModel boardModel)
@@ -103,7 +119,7 @@ public class FastBoard
             final int left = map.containsKey(leftPos) ? map.get(leftPos) : -1;
             final int right = map.containsKey(rightPos) ? map.get(rightPos) : -1;
             
-            tmpBoard[index] = new Cell(up, down, left, right, color, hasStar);
+            tmpBoard[index] = new Cell(up, down, left, right, color, hasStar, pos);
         }
         
         return tmpBoard;
