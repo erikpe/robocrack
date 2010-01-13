@@ -1,7 +1,5 @@
 package robocrack.engine.fastsimulator;
 
-import java.util.HashMap;
-
 import robocrack.engine.board.BoardModel;
 import robocrack.engine.fastsimulator.FastBoard.Cell;
 import robocrack.engine.program.Instruction;
@@ -20,9 +18,9 @@ public class FastSimulator
     
     private final int[] funcStack = new int[MAX_SIMSTEPS];
     private final int[] slotStack = new int[MAX_SIMSTEPS];
-    private final int[][] stateStack = new int[MAX_SIMSTEPS][MAX_SIMSTEPS + 1];
     
-    private HashMap<Integer, Object> stateSet;
+    private final int[] stateStack;
+    private final int[] stateStackPtr;
     
     public FastSimulator(final BoardModel boardModel,
             final ProgramModel programModel)
@@ -32,6 +30,9 @@ public class FastSimulator
         
         this.program = programGenerator.program;
         this.board = fastBoard.board;
+        
+        this.stateStack = new int[MAX_SIMSTEPS];
+        this.stateStackPtr = new int[MAX_SIMSTEPS];
     }
     
     public Instruction[][] bruteForce()
@@ -47,7 +48,7 @@ public class FastSimulator
             simsteps += simulate();
             testedPrograms++;
             
-            if (testedPrograms % 1000 == 0)
+            if (testedPrograms % 10000 == 0)
             {
                 long now = System.currentTimeMillis();
                 
@@ -118,26 +119,25 @@ public class FastSimulator
         int simsteps = 0;
         int stackPtr = 0;
         
-        Condition condition;
         int callFun;
-        
+        int i;
         int state;
-        stateStack[0][0] = 1;
-        
-        stateSet = new HashMap<Integer, Object>();
+        stateStackPtr[0] = 0;
         
         while (true)
         {
             state = arrowPos ^ (arrowDir << 12) ^ (pcFunc << 14)
                     ^ (pcSlot << 17);
             
-            if (stateSet.containsKey(state))
+            for (i = 0; i < stateStackPtr[stackPtr]; ++i)
             {
-                return simsteps;
+                if (stateStack[i] == state)
+                {
+                    return simsteps;
+                }
             }
             
-            stateStack[stackPtr][stateStack[stackPtr][0]++] = state;
-            stateSet.put(state, null);
+            stateStack[stateStackPtr[stackPtr]++] = state;
             
             if (++simsteps == MAX_SIMSTEPS)
             {
@@ -146,8 +146,8 @@ public class FastSimulator
             
             callFun = -1;
             
-            condition = program[pcFunc][pcSlot].condition;
-            if (condition == Condition.ON_ALL || condition == board[arrowPos].color)
+            if (program[pcFunc][pcSlot].condition == Condition.ON_ALL
+                    || program[pcFunc][pcSlot].condition == board[arrowPos].color)
             {
                 switch (program[pcFunc][pcSlot].opCode)
                 {
@@ -216,11 +216,6 @@ public class FastSimulator
                 {
                     if (stackPtr > 0)
                     {
-                        while (stateStack[stackPtr][0] > 1)
-                        {
-                            stateSet.remove(stateStack[stackPtr][--stateStack[stackPtr][0]]);
-                        }
-                        
                         pcSlot = slotStack[--stackPtr];
                         pcFunc = funcStack[stackPtr];
                     }
@@ -237,7 +232,7 @@ public class FastSimulator
                     slotStack[stackPtr] = pcSlot;
                     funcStack[stackPtr++] = pcFunc;
                     
-                    stateStack[stackPtr][0] = 1;
+                    stateStackPtr[stackPtr] = stateStackPtr[stackPtr - 1];
                 }
                 
                 pcSlot = 0;
