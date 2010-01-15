@@ -8,6 +8,7 @@ import robocrack.engine.program.ProgramModel;
 import robocrack.engine.simulator.Simulator;
 import robocrack.gui.board.BoardButtonPane;
 import robocrack.gui.board.BoardPane;
+import robocrack.gui.board.PuzzleLoaderPane;
 import robocrack.gui.program.FunctionButtonPane;
 import robocrack.gui.program.ProgramPane;
 import robocrack.gui.program.ProgramSettings;
@@ -25,6 +26,8 @@ public class MainWindow extends JFrame
         
         final BoardButtonPane boardButtonPane = new BoardButtonPane(guiModel,
                 simulator);
+        final PuzzleLoaderPane puzzleLoaderPane = new PuzzleLoaderPane(
+                programModel, boardModel);
         final BoardPane boardPane = new BoardPane(boardModel, guiModel);
         final FunctionButtonPane functionButtonPane = new FunctionButtonPane(
                 guiModel, simulator, programModel);
@@ -42,6 +45,7 @@ public class MainWindow extends JFrame
                 new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
         
         getContentPane().add(boardButtonPane);
+        getContentPane().add(puzzleLoaderPane);
         getContentPane().add(boardPane);
         getContentPane().add(functionButtonPane);
         getContentPane().add(programSettings);

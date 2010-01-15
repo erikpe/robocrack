@@ -9,7 +9,6 @@ import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-import robocrack.engine.fastsimulator.FastSimulator;
 import robocrack.engine.simulator.Simulator;
 import robocrack.engine.simulator.Simulator.SimulatorState;
 
