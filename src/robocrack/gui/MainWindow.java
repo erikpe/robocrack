@@ -35,7 +35,7 @@ public class MainWindow extends JFrame
         final ProgramPane programPane = new ProgramPane(programModel, guiModel,
                 simulator);
         final SimulatorButtonPane simButtonPane = new SimulatorButtonPane(
-                simulator);
+                simulator, programModel, boardModel);
         final SimulatorSettings simSettings = new SimulatorSettings(simulator);
         final StackPane stackPane = new StackPane(simulator, guiModel, 15, 3);
         

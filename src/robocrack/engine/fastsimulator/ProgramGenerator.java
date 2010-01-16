@@ -19,6 +19,8 @@ public class ProgramGenerator
     
     public long programsGenerated = 1;
     
+    public BigInteger totPrograms;
+    
     public ProgramGenerator(final ProgramModel programModel)
     {
         this.programModel = programModel;
@@ -143,9 +145,10 @@ public class ProgramGenerator
             totalSlots += slots;
         }
         
+        totPrograms = BigInteger.valueOf(instructions.length).pow(totalSlots);
+        
         System.out.println("Number of program slots: " + totalSlots);
-        System.out.println("Number of possible programs: "
-                + BigInteger.valueOf(instructions.length).pow(totalSlots));
+        System.out.println("Number of possible programs: " + totPrograms);
         
         return tmpProgram;
     }

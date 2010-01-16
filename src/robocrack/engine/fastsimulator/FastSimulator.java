@@ -1,19 +1,22 @@
 package robocrack.engine.fastsimulator;
 
+import java.math.BigInteger;
+import java.util.Observable;
+
 import robocrack.engine.board.BoardModel;
 import robocrack.engine.fastsimulator.FastBoard.Cell;
 import robocrack.engine.program.Instruction;
 import robocrack.engine.program.ProgramModel;
 import robocrack.engine.program.ProgramModel.Condition;
 
-public class FastSimulator
+public class FastSimulator extends Observable
 {
     private static final int MAX_SIMSTEPS = 1000;
     
     private final ProgramGenerator programGenerator;
     private final FastBoard fastBoard;
     
-    private final Instruction[][] program;
+    public final Instruction[][] program;
     private final Cell[] board;
     
     private final int[] funcStack = new int[MAX_SIMSTEPS];
@@ -21,6 +24,12 @@ public class FastSimulator
     
     private final int[] stateStack;
     private final int[] stateStackPtr;
+    
+    public final BigInteger totPrograms;
+    public long totTestedPrograms = 0;
+    public long totSimsteps = 0;
+    
+    public boolean stop = false;
     
     public FastSimulator(final BoardModel boardModel,
             final ProgramModel programModel)
@@ -33,77 +42,33 @@ public class FastSimulator
         
         this.stateStack = new int[MAX_SIMSTEPS];
         this.stateStackPtr = new int[MAX_SIMSTEPS];
+        
+        totPrograms = programGenerator.totPrograms;
     }
     
     public Instruction[][] bruteForce()
     {
-        final long startTime = System.currentTimeMillis();
-        long lastPrint = startTime;
-        
-        long testedPrograms = 0;
-        long simsteps = 0;
-        
         do
         {
-            simsteps += simulate();
-            testedPrograms++;
-            
-            if (testedPrograms % 10000 == 0)
-            {
-                long now = System.currentTimeMillis();
-                
-                if (now - lastPrint > 5000.0)
-                {
-                    final double time = (now - startTime) / 1000.0;
-                    
-                    System.out.println(testedPrograms + " tried in " + time
-                            + " sec (" + (testedPrograms / time) + " progs/s)");
-                    
-                    System.out.println("Total number of simulation steps: "
-                            + simsteps + " (" + (simsteps / time)
-                            + " steps/s, avg: "
-                            + (((double) simsteps) / testedPrograms)
-                            + " steps/prog)");
-                    
-                    lastPrint = now;
-                }
-            }
-            
+            totSimsteps += simulate();
+            totTestedPrograms++;
+
             if (fastBoard.starsLeft == 0)
             {
-                final long stopTime = System.currentTimeMillis();
-                final double time = (stopTime - startTime) / 1000.0;
-                
-                System.out.println("Found solution after trying "
-                        + testedPrograms + " programs in " + time + " sec ("
-                        + (testedPrograms / time) + " progs/s)");
-                
-                System.out.println("Total number of simulation steps: "
-                        + simsteps + " (" + (simsteps / time)
-                        + " steps/s, avg: "
-                        + (((double) simsteps) / testedPrograms)
-                        + " steps/prog)");
-                
                 printProgram();
+                
+                setChanged();
+                notifyObservers();
+                
                 return program;
             }
             
             fastBoard.reset();
             programGenerator.nextProgram();
-        } while (programGenerator.hasNext);
+        } while (!stop && programGenerator.hasNext);
         
-        final long stopTime = System.currentTimeMillis();
-        final double time = (stopTime - startTime) / 1000.0;
-        
-        System.out.println("Failed to find a solution after trying "
-                + testedPrograms + " programs in " + time + " sec ("
-                + (testedPrograms / time) + " progs/s)");
-        
-        System.out.println("Total number of simulation steps: "
-                + simsteps + " (" + (((double) simsteps) / time)
-                + " steps/s, avg: "
-                + (((double) simsteps) / testedPrograms)
-                + " steps/prog)");
+        setChanged();
+        notifyObservers();
         
         return null;
     }

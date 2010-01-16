@@ -9,8 +9,12 @@ import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import robocrack.engine.board.BoardModel;
+import robocrack.engine.fastsimulator.FastSimulator;
+import robocrack.engine.program.ProgramModel;
 import robocrack.engine.simulator.Simulator;
 import robocrack.engine.simulator.Simulator.SimulatorState;
+import robocrack.gui.bruteforce.BruteForceDialog;
 
 @SuppressWarnings("serial")
 public class SimulatorButtonPane extends JComponent implements ActionListener,
@@ -19,15 +23,22 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
     private static final int SPACING = 3;
     
     private final Simulator simulator;
+    private final ProgramModel programModel;
+    private final BoardModel boardModel;
     
     private final JButton playPauseButton;
     private final JButton stepButton;
     private final JButton resetButton;
     private final JButton bruteForce;
     
-    public SimulatorButtonPane(final Simulator simulator)
+    private FastSimulator fastSim;
+    
+    public SimulatorButtonPane(final Simulator simulator,
+            final ProgramModel programModel, final BoardModel boardModel)
     {
         this.simulator = simulator;
+        this.programModel = programModel;
+        this.boardModel = boardModel;
         
         this.playPauseButton = new JButton("Play/Pause");
         this.stepButton = new JButton("Step");
@@ -88,15 +99,50 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
         }
         else if (e.getSource() == bruteForce)
         {
-            simulator.bruteForce();
+            simulator.isBruteForcing(true);
+            
+            final FastSimulator fastSim = new FastSimulator(boardModel,
+                    programModel);
+            final BruteForceDialog dialog = new BruteForceDialog(fastSim,
+                    simulator, programModel);
+            
+            dialog.setVisible(true);
+            dialog.start();
         }
     }
     
     private void update()
     {
-        playPauseButton.setEnabled(simulator.getState() != SimulatorState.HALTED);
-        stepButton.setEnabled(simulator.getState() != SimulatorState.HALTED);
-        resetButton.setEnabled(simulator.getState() != SimulatorState.RESET);
+        switch (simulator.getState())
+        {
+        case RESET:
+            playPauseButton.setEnabled(true);
+            stepButton.setEnabled(true);
+            resetButton.setEnabled(false);
+            bruteForce.setEnabled(true);
+            break;
+        
+        case HALTED:
+            playPauseButton.setEnabled(false);
+            stepButton.setEnabled(false);
+            resetButton.setEnabled(true);
+            bruteForce.setEnabled(false);
+            break;
+            
+        case RUNNING:
+            playPauseButton.setEnabled(true);
+            stepButton.setEnabled(true);
+            resetButton.setEnabled(true);
+            bruteForce.setEnabled(false);
+            break;
+            
+        case BRUTE_FORCING:
+            playPauseButton.setEnabled(false);
+            stepButton.setEnabled(false);
+            resetButton.setEnabled(false);
+            bruteForce.setEnabled(false);
+            break;
+        }
     }
     
     @Override

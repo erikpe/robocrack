@@ -10,6 +10,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 
 import robocrack.engine.simulator.Simulator;
+import robocrack.engine.simulator.Simulator.SimulatorState;
 
 @SuppressWarnings("serial")
 public class SimulatorSettings extends JComponent implements ActionListener, Observer
@@ -55,15 +56,14 @@ public class SimulatorSettings extends JComponent implements ActionListener, Obs
     private void update()
     {
         tailCallBox.setSelected(simulator.getTailCallOptimization());
+        tailCallBox
+                .setEnabled(simulator.getState() != SimulatorState.BRUTE_FORCING);
     }
     
     @Override
     public void update(final Observable observable, final Object arg)
     {
-        if (arg == null)
-        {
-            update();
-        }
+        update();
     }
 
     @Override

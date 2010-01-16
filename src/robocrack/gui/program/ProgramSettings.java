@@ -79,7 +79,7 @@ public class ProgramSettings extends JComponent implements ActionListener, Obser
             update();
         }
     }
-
+    
     @Override
     public void actionPerformed(final ActionEvent e)
     {

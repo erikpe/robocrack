@@ -11,7 +11,10 @@ import robocrack.engine.board.BoardModel;
 import robocrack.engine.board.CellPosition;
 import robocrack.engine.board.BoardModel.ArrowDirection;
 import robocrack.engine.board.BoardModel.CellColor;
+import robocrack.engine.program.InstructionPosition;
 import robocrack.engine.program.ProgramModel;
+import robocrack.engine.program.ProgramModel.Condition;
+import robocrack.engine.program.ProgramModel.OpCode;
 
 public class Loader
 {
@@ -124,24 +127,18 @@ public class Loader
         final String[] funcStrings = puzzleStr.substring(beginIndex, endIndex)
                 .split(",");
         
+        for (int i = 5; i > 1; --i)
+        {
+            programModel.setFunctionLength(i, 0);
+        }
+        programModel.setFunctionLength(1, 1);
+        programModel.setCondition(InstructionPosition.make(1, 0), Condition.ON_ALL);
+        programModel.setOpCode(InstructionPosition.make(1, 0), OpCode.NOP);
+        
         for (int i = 0; i < 5; ++i)
         {
             final int func = Integer.valueOf(funcStrings[i].trim());
-            
-            if (func != 0)
-            {
-                programModel.setFunctionLength(i + 1, func);
-            }
-        }
-        
-        for (int i = 4; i >= 0; --i)
-        {
-            final int func = Integer.valueOf(funcStrings[i].trim());
-
-            if (func == 0)
-            {
-                programModel.setFunctionLength(i + 1, 0);
-            }
+            programModel.setFunctionLength(i + 1, func);
         }
     }
     
