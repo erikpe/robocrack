@@ -83,7 +83,7 @@ public class Simulator extends Observable
             boardSimulator.startSimulation();
             nextInstruction(InstructionPosition.make(1, -1));
             
-            if (boardSimulator.getCurrentCell().getColor() == CellColor.NONE)
+            if (boardSimulator.getCurrentCell().simGetColor() == CellColor.NONE)
             {
                 setState(SimulatorState.HALTED);
             }
@@ -117,7 +117,7 @@ public class Simulator extends Observable
     {
         final Cell cell = boardSimulator.getCurrentCell();
         
-        if (skip(cell.getColor(), instruction.condition))
+        if (skip(cell.simGetColor(), instruction.condition))
         {
             nextInstruction();
             return;
@@ -148,7 +148,7 @@ public class Simulator extends Observable
         {
             setState(SimulatorState.HALTED);
         }
-        if (boardSimulator.getCurrentCell().getColor() == CellColor.NONE)
+        if (boardSimulator.getCurrentCell().simGetColor() == CellColor.NONE)
         {
             setState(SimulatorState.HALTED);
         }

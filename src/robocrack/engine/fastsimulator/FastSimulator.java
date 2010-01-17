@@ -8,6 +8,7 @@ import robocrack.engine.fastsimulator.FastBoard.Cell;
 import robocrack.engine.program.Instruction;
 import robocrack.engine.program.ProgramModel;
 import robocrack.engine.program.ProgramModel.Condition;
+import robocrack.engine.program.ProgramModel.OpCode;
 
 public class FastSimulator extends Observable
 {
@@ -32,6 +33,8 @@ public class FastSimulator extends Observable
     public boolean stop = false;
     public boolean solutionFound = false;
     
+    private final boolean detectLoops;
+    
     public FastSimulator(final BoardModel boardModel,
             final ProgramModel programModel)
     {
@@ -44,7 +47,16 @@ public class FastSimulator extends Observable
         this.stateStack = new int[MAX_SIMSTEPS];
         this.stateStackPtr = new int[MAX_SIMSTEPS];
         
+        this.detectLoops = detectLoops(programModel);
+        
         totPrograms = programGenerator.totPrograms;
+    }
+    
+    private boolean detectLoops(final ProgramModel programModel)
+    {
+        return !programModel.isAllowed(OpCode.PAINT_RED)
+                && !programModel.isAllowed(OpCode.PAINT_GREEN)
+                && !programModel.isAllowed(OpCode.PAINT_BLUE);
     }
     
     public void bruteForce()
@@ -91,18 +103,21 @@ public class FastSimulator extends Observable
         
         while (true)
         {
-            state = arrowPos ^ (arrowDir << 12) ^ (pcFunc << 14)
-                    ^ (pcSlot << 17);
-            
-            for (i = 0; i < stateStackPtr[stackPtr]; ++i)
+            if (detectLoops)
             {
-                if (stateStack[i] == state)
+                state = arrowPos ^ (arrowDir << 12) ^ (pcFunc << 14)
+                        ^ (pcSlot << 17);
+                
+                for (i = 0; i < stateStackPtr[stackPtr]; ++i)
                 {
-                    return simsteps;
+                    if (stateStack[i] == state)
+                    {
+                        return simsteps;
+                    }
                 }
+                
+                stateStack[stateStackPtr[stackPtr]++] = state;
             }
-            
-            stateStack[stateStackPtr[stackPtr]++] = state;
             
             if (++simsteps == MAX_SIMSTEPS)
             {
@@ -212,7 +227,10 @@ public class FastSimulator extends Observable
                     slotStack[stackPtr] = pcSlot;
                     funcStack[stackPtr++] = pcFunc;
                     
-                    stateStackPtr[stackPtr] = stateStackPtr[stackPtr - 1];
+                    if (detectLoops)
+                    {
+                        stateStackPtr[stackPtr] = stateStackPtr[stackPtr - 1];
+                    }
                 }
                 
                 pcSlot = 0;

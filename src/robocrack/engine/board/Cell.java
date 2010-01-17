@@ -58,6 +58,11 @@ public class Cell
         return color;
     }
     
+    public CellColor simGetColor()
+    {
+        return simColor;
+    }
+    
     boolean resetSimulation()
     {
         return simColor != color || simHasStar != hasStar;

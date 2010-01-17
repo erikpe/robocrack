@@ -166,7 +166,7 @@ public class FastBoard
         while (numPaintedCells > 0)
         {
             numPaintedCells--;
-            board[numPaintedCells].color = board[numPaintedCells].origColor;
+            board[paintedCells[numPaintedCells]].color = board[paintedCells[numPaintedCells]].origColor;
         }
     }
 }
