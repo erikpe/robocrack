@@ -92,6 +92,21 @@ public class ProgramGenerator
             }
         }
         
+        if (programModel.isAllowed(OpCode.PAINT_RED))
+        {
+            set.add(Condition.ON_RED);
+        }
+        
+        if (programModel.isAllowed(OpCode.PAINT_GREEN))
+        {
+            set.add(Condition.ON_GREEN);
+        }
+        
+        if (programModel.isAllowed(OpCode.PAINT_BLUE))
+        {
+            set.add(Condition.ON_BLUE);
+        }
+        
         return set;
     }
     
