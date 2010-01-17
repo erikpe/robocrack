@@ -17,4 +17,6 @@ public interface BoardSimulator extends BoardViewer
     public Cell getCurrentCell();
     
     public void simPaintColor(final CellColor color);
+    
+    public int simNumStarsLeft();
 }

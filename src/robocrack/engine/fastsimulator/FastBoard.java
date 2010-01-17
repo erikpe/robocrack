@@ -51,7 +51,9 @@ public class FastBoard
     public final int arrowDirection;
     
     public final int[] takenStars;
+    public final int[] paintedCells;
     public int starsLeft;
+    public int numPaintedCells;
     
     public FastBoard(final BoardModel boardModel)
     {
@@ -60,7 +62,9 @@ public class FastBoard
         this.arrowDirection = arrowDirectionNum(boardModel.getArrowDirection());
         
         this.takenStars = new int[numStars];
+        this.paintedCells = new int[1000];
         this.starsLeft = numStars;
+        this.numPaintedCells = 0;
     }
     
     private int arrowDirectionNum(final ArrowDirection direction)
@@ -157,6 +161,12 @@ public class FastBoard
         while (starsLeft < numStars)
         {
             board[takenStars[starsLeft++]].hasStar = true;
+        }
+        
+        while (numPaintedCells > 0)
+        {
+            numPaintedCells--;
+            board[numPaintedCells].color = board[numPaintedCells].origColor;
         }
     }
 }

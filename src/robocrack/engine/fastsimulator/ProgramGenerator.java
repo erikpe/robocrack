@@ -1,8 +1,13 @@
 package robocrack.engine.fastsimulator;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
+import robocrack.engine.board.BoardModel;
+import robocrack.engine.board.CellPosition;
 import robocrack.engine.program.Instruction;
 import robocrack.engine.program.ProgramModel;
 import robocrack.engine.program.ProgramModel.Condition;
@@ -11,6 +16,7 @@ import robocrack.engine.program.ProgramModel.OpCode;
 public class ProgramGenerator
 {
     private final ProgramModel programModel;
+    private final BoardModel boardModel;
     
     private final Instruction[] instructions;
     final Instruction[][] program;
@@ -21,10 +27,15 @@ public class ProgramGenerator
     
     public BigInteger totPrograms;
     
-    public ProgramGenerator(final ProgramModel programModel)
+    private final Set<Condition> usedColors;
+    
+    public ProgramGenerator(final ProgramModel programModel,
+            final BoardModel boardModel)
     {
         this.programModel = programModel;
+        this.boardModel = boardModel;
         
+        this.usedColors = getUsedColors();
         this.instructions = genInstructionTable();
         this.program = genProgram();
         
@@ -46,22 +57,6 @@ public class ProgramGenerator
     
     public final void nextProgram()
     {
-//        program[0][0] = new Instruction(OpCode.CALL_F2, Condition.ON_ALL);
-//        program[0][1] = new Instruction(OpCode.CALL_F1, Condition.ON_ALL);
-//        program[1][0] = new Instruction(OpCode.GO_FORWARD, Condition.ON_ALL);
-//        program[1][1] = new Instruction(OpCode.CALL_F2, Condition.ON_BLUE);
-//        program[1][2] = new Instruction(OpCode.CALL_F3, Condition.ON_ALL);
-//        program[2][0] = new Instruction(OpCode.GO_FORWARD, Condition.ON_ALL);
-//        program[2][1] = new Instruction(OpCode.CALL_F3, Condition.ON_BLUE);
-//        program[2][2] = new Instruction(OpCode.TURN_LEFT, Condition.ON_ALL);
-        
-//        program[0][0] = new Instruction(OpCode.GO_FORWARD, Condition.ON_BLUE);
-//        program[0][1] = new Instruction(OpCode.TURN_RIGHT, Condition.ON_RED);
-//        program[0][2] = new Instruction(OpCode.CALL_F2, Condition.ON_ALL);
-//        program[1][0] = new Instruction(OpCode.TURN_RIGHT, Condition.ON_RED);
-//        program[1][1] = new Instruction(OpCode.GO_FORWARD, Condition.ON_RED);
-//        program[1][2] = new Instruction(OpCode.CALL_F1, Condition.ON_BLUE);
-        
         for (int funcNr = 0; funcNr < program.length; ++funcNr)
         {
             for (int slot = 0; slot < program[funcNr].length; ++slot)
@@ -80,40 +75,60 @@ public class ProgramGenerator
         hasNext = false;
     }
     
+    private Set<Condition> getUsedColors()
+    {
+        final Set<Condition> set = EnumSet.of(Condition.ON_ALL);
+        
+        for (int y = 0; y < boardModel.height(); ++y)
+        {
+            for (int x = 0; x < boardModel.width(); ++x)
+            {
+                switch (boardModel.getColor(CellPosition.make(x, y)))
+                {
+                case RED: set.add(Condition.ON_RED); break;
+                case GREEN: set.add(Condition.ON_GREEN); break;
+                case BLUE: set.add(Condition.ON_BLUE); break;
+                }
+            }
+        }
+        
+        return set;
+    }
+    
     private Instruction[] genInstructionTable()
     {
-        final EnumSet<OpCode> opCodes = EnumSet.allOf(OpCode.class);
-        final EnumSet<Condition> conditions = EnumSet.allOf(Condition.class);        
+        final List<Instruction> list = new ArrayList<Instruction>();
+        int id = 0;
         
         for (final OpCode opCode : OpCode.values())
         {
-            if (!programModel.isAllowed(opCode))
+            for (final Condition condition : Condition.values())
             {
-                opCodes.remove(opCode);
+                Instruction inst = new Instruction(opCode, condition);
+                
+                if (isApplicable(inst))
+                {
+                    inst = new Instruction(opCode, condition, id++);
+                    list.add(inst);
+                }
             }
         }
         
-        opCodes.remove(OpCode.NOP);
-        
-        final Instruction[] tmpInst = new Instruction[opCodes.size()
-                * conditions.size() + 1];
-        
-        int id = 0;
-        
-        for (final OpCode opCode : opCodes)
+        return list.toArray(new Instruction[list.size()]);
+    }
+    
+    private boolean isApplicable(final Instruction inst)
+    {
+        if (!programModel.isAllowed(inst.opCode))
         {
-            for (final Condition condition : conditions)
-            {
-                tmpInst[id] = new Instruction(opCode, condition, id);
-                id++;
-            }
+            return false;
+        }
+        else if (inst.opCode == OpCode.NOP && inst.condition != Condition.ON_ALL)
+        {
+            return false;
         }
         
-        tmpInst[id] = new Instruction(OpCode.NOP, Condition.ON_ALL, id);
-        
-        System.out.println("Number of possible instructions: " + tmpInst.length);
-        
-        return tmpInst;
+        return usedColors.contains(inst.condition);
     }
     
     private int numFunctions()

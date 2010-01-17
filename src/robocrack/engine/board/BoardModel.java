@@ -56,7 +56,7 @@ public class BoardModel extends Observable implements BoardEditor,
     private static final ArrowDirection ARROW_DEFAULT_DIRECTION = ArrowDirection.RIGHT;
     private static final CellPosition ARROW_DEFAULT_POSITION = CellPosition.make(
             0, 0);
-
+    
     private final int width;
     private final int height;
     
@@ -65,7 +65,6 @@ public class BoardModel extends Observable implements BoardEditor,
     
     private ArrowDirection startArrowDirection;
     private Cell startCell;
-    private int nrStars;
 
     private ArrowDirection simArrowDirection;
     private Cell simCurrentCell;
@@ -131,12 +130,17 @@ public class BoardModel extends Observable implements BoardEditor,
         
         simArrowDirection = startArrowDirection;
         simCurrentCell = startCell;
-        simNrStars = nrStars;
+        simNrStars = 0;
         
         for (int y = 0; y < height(); ++y)
         {
             for (int x = 0; x < width(); ++x)
             {
+                if (board[x][y].hasStar)
+                {
+                    simNrStars ++;
+                }
+                
                 board[x][y].startSimulation();
             }
         }
@@ -342,6 +346,11 @@ public class BoardModel extends Observable implements BoardEditor,
         simArrowDirection = simArrowDirection.turnRight();
         setChanged();
         notifyObservers(simCurrentCell.cellPosition);
+    }
+    
+    public int simNumStarsLeft()
+    {
+        return simNrStars;
     }
 
     public void clear()

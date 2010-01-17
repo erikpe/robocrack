@@ -31,8 +31,6 @@ public class SimulatorButtonPane extends JComponent implements ActionListener,
     private final JButton resetButton;
     private final JButton bruteForce;
     
-    private FastSimulator fastSim;
-    
     public SimulatorButtonPane(final Simulator simulator,
             final ProgramModel programModel, final BoardModel boardModel)
     {

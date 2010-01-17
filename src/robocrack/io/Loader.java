@@ -78,6 +78,7 @@ public class Loader
         boardModel.setArrowPosition(getArrowPosition(puzzleStr));
         boardModel.setArrowDirection(getArrowDir(puzzleStr));
         setFunctions(puzzleStr, programModel);
+        setAllowedInstructions(puzzleStr, programModel);
         loadBoard(puzzleStr, boardModel);
     }
     
@@ -115,6 +116,21 @@ public class Loader
                 boardModel.setStar(pos, star);
             }
         }
+    }
+    
+    private static void setAllowedInstructions(final String puzzleStr,
+            final ProgramModel programModel)
+    {
+        int beginIndex = puzzleStr.indexOf("allowedCommands");
+        beginIndex = puzzleStr.indexOf(':', beginIndex) + 1;
+        int endIndex = puzzleStr.indexOf(',', beginIndex);
+        
+        final int allowed = Integer.valueOf(puzzleStr.substring(
+                beginIndex, endIndex).trim());
+        
+        programModel.setAllowed(OpCode.PAINT_RED, (allowed & 1) != 0);
+        programModel.setAllowed(OpCode.PAINT_GREEN, (allowed & 2) != 0);
+        programModel.setAllowed(OpCode.PAINT_BLUE, (allowed & 4) != 0);
     }
     
     private static void setFunctions(final String puzzleStr,

@@ -144,6 +144,10 @@ public class Simulator extends Observable
     {
         boardSimulator.simGoForward();
         
+        if (boardSimulator.simNumStarsLeft() == 0)
+        {
+            setState(SimulatorState.HALTED);
+        }
         if (boardSimulator.getCurrentCell().getColor() == CellColor.NONE)
         {
             setState(SimulatorState.HALTED);

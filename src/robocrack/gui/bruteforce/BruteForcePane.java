@@ -24,10 +24,7 @@ import robocrack.engine.simulator.Simulator;
 public class BruteForcePane extends JComponent implements Observer, ActionListener
 {
     private static final int SPACING = 3;
-    
     private static final int UPDATE_INTERVAL_MSEC = 500;
-    private static final int TEXT_AREA_WIDTH = 600;
-    private static final int TEXT_AREA_HEIGHT = 250;
     
     private final JFrame frame;
     private final FastSimulator fastSim;
@@ -43,7 +40,7 @@ public class BruteForcePane extends JComponent implements Observer, ActionListen
     
     private long startTime;
     
-    public BruteForcePane(final JFrame frame, final FastSimulator fastSim,
+    public BruteForcePane(final BruteForceDialog frame, final FastSimulator fastSim,
             final Simulator simulator, final ProgramModel programModel)
     {
         this.frame = frame;
@@ -51,7 +48,7 @@ public class BruteForcePane extends JComponent implements Observer, ActionListen
         this.simulator = simulator;
         this.programModel = programModel;
         
-        this.textArea = new JTextArea();
+        this.textArea = frame.textArea;
         this.cancelButton = new JButton("Cancel");
         this.loadButton = new JButton("Load solution");
         
@@ -65,18 +62,13 @@ public class BruteForcePane extends JComponent implements Observer, ActionListen
         textArea.setEditable(false);
         loadButton.setEnabled(false);
         
-        add(textArea);
-        textArea.setBounds(0, 0, TEXT_AREA_WIDTH, TEXT_AREA_HEIGHT);
-        
         int xBounds = 0;
-        int yBounds = TEXT_AREA_HEIGHT + SPACING;
         
-        xBounds = addComponent(cancelButton, xBounds, yBounds);
-        xBounds = addComponent(loadButton, xBounds + SPACING, yBounds);
+        xBounds = addComponent(cancelButton, xBounds);
+        xBounds = addComponent(loadButton, xBounds + SPACING);
         
-        final int width = Math.max(textArea.getWidth(), xBounds);
-        final int height = textArea.getHeight() + SPACING
-                + cancelButton.getHeight();
+        final int width = xBounds;
+        final int height = cancelButton.getPreferredSize().height;
         
         setPreferredSize(new Dimension(width, height));
         
@@ -86,14 +78,13 @@ public class BruteForcePane extends JComponent implements Observer, ActionListen
         fastSim.addObserver(this);
     }
     
-    private int addComponent(final JComponent comp, final int xBounds,
-            final int yBounds)
+    private int addComponent(final JComponent comp, final int xBounds)
     {
         final int width = comp.getPreferredSize().width;
         final int height = comp.getPreferredSize().height;
         
         add(comp);
-        comp.setBounds(xBounds, yBounds, width, height);
+        comp.setBounds(xBounds, 0, width, height);
         
         return xBounds + width;
     }
@@ -139,12 +130,16 @@ public class BruteForcePane extends JComponent implements Observer, ActionListen
         final double amountTested = (100.0 * testedPrograms)
                 / fastSim.totPrograms.doubleValue();
         
+        formatter.format("Number of possible programs: "
+                + fastSim.programGenerator.totPrograms + "\n\n");
         formatter.format("Time used: %.1f sec\n", time);
-        formatter.format("Programs tested: %d (%.4f%%)\n", testedPrograms, amountTested);
+        formatter.format("Programs tested: %d (%.4f%%)\n", testedPrograms,
+                amountTested);
         formatter.format("Progs/s: %d\n", (long) (testedPrograms / time));
         formatter.format("Simulation steps: %d\n", simsteps);
         formatter.format("Steps/s: %d\n", (long) (simsteps / time));
-        formatter.format("Avg steps/prog: %.2f\n", ((float) simsteps) /testedPrograms);
+        formatter.format("Avg steps/prog: %.2f\n", ((float) simsteps)
+                / testedPrograms);
         
         textArea.setText(sb.toString());
     }
@@ -172,7 +167,13 @@ public class BruteForcePane extends JComponent implements Observer, ActionListen
         }
         
         textArea.setText(sb.toString());
-
+    }
+    
+    private void printNoSolution()
+    {
+        final StringBuilder sb = new StringBuilder(textArea.getText());
+        sb.append("\nNo solution found!\n");
+        textArea.setText(sb.toString());
     }
     
     @Override
@@ -181,7 +182,7 @@ public class BruteForcePane extends JComponent implements Observer, ActionListen
         updateTimer.cancel();
         update();
         
-        if (fastSim.program != null)
+        if (fastSim.solutionFound)
         {
             printSolution(fastSim.program);
             frame.setTitle("Solution found!");
@@ -189,7 +190,8 @@ public class BruteForcePane extends JComponent implements Observer, ActionListen
         }
         else
         {
-            frame.setTitle("No solution found");
+            printNoSolution();
+            frame.setTitle("No solution found!");
         }
     }
 
@@ -219,6 +221,7 @@ public class BruteForcePane extends JComponent implements Observer, ActionListen
                     programModel.setOpCode(pos, solution[func][slot].opCode);
                 }
             }
+            
             simulator.isBruteForcing(true);
         }
     }

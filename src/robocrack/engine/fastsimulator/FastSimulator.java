@@ -13,7 +13,7 @@ public class FastSimulator extends Observable
 {
     private static final int MAX_SIMSTEPS = 1000;
     
-    private final ProgramGenerator programGenerator;
+    public final ProgramGenerator programGenerator;
     private final FastBoard fastBoard;
     
     public final Instruction[][] program;
@@ -30,11 +30,12 @@ public class FastSimulator extends Observable
     public long totSimsteps = 0;
     
     public boolean stop = false;
+    public boolean solutionFound = false;
     
     public FastSimulator(final BoardModel boardModel,
             final ProgramModel programModel)
     {
-        this.programGenerator = new ProgramGenerator(programModel);
+        this.programGenerator = new ProgramGenerator(programModel, boardModel);
         this.fastBoard = new FastBoard(boardModel);
         
         this.program = programGenerator.program;
@@ -46,7 +47,7 @@ public class FastSimulator extends Observable
         totPrograms = programGenerator.totPrograms;
     }
     
-    public Instruction[][] bruteForce()
+    public void bruteForce()
     {
         do
         {
@@ -56,11 +57,12 @@ public class FastSimulator extends Observable
             if (fastBoard.starsLeft == 0)
             {
                 printProgram();
+                solutionFound = true;
                 
                 setChanged();
                 notifyObservers();
                 
-                return program;
+                return;
             }
             
             fastBoard.reset();
@@ -69,8 +71,6 @@ public class FastSimulator extends Observable
         
         setChanged();
         notifyObservers();
-        
-        return null;
     }
     
     private int simulate()
@@ -169,6 +169,21 @@ public class FastSimulator extends Observable
                     
                 case CALL_F5:
                     callFun = 4;
+                    break;
+                    
+                case PAINT_RED:
+                    board[arrowPos].color = Condition.ON_RED;
+                    fastBoard.paintedCells[fastBoard.numPaintedCells++] = arrowPos;
+                    break;
+                    
+                case PAINT_GREEN:
+                    board[arrowPos].color = Condition.ON_GREEN;
+                    fastBoard.paintedCells[fastBoard.numPaintedCells++] = arrowPos;
+                    break;
+                    
+                case PAINT_BLUE:
+                    board[arrowPos].color = Condition.ON_BLUE;
+                    fastBoard.paintedCells[fastBoard.numPaintedCells++] = arrowPos;
                     break;
                 }
             }
