@@ -8,7 +8,6 @@ import robocrack.engine.fastsimulator.FastBoard.Cell;
 import robocrack.engine.program.Instruction;
 import robocrack.engine.program.ProgramModel;
 import robocrack.engine.program.ProgramModel.Condition;
-import robocrack.engine.program.ProgramModel.OpCode;
 
 public class FastSimulator extends Observable
 {
@@ -25,6 +24,7 @@ public class FastSimulator extends Observable
     
     private final int[] stateStack;
     private final int[] stateStackPtr;
+    private int stateStackCntr;
     
     public final BigInteger totPrograms;
     public long totTestedPrograms = 0;
@@ -32,8 +32,6 @@ public class FastSimulator extends Observable
     
     public boolean stop = false;
     public boolean solutionFound = false;
-    
-    private final boolean detectLoops;
     
     public FastSimulator(final BoardModel boardModel,
             final ProgramModel programModel)
@@ -47,16 +45,7 @@ public class FastSimulator extends Observable
         this.stateStack = new int[MAX_SIMSTEPS];
         this.stateStackPtr = new int[MAX_SIMSTEPS];
         
-        this.detectLoops = detectLoops(programModel);
-        
         totPrograms = programGenerator.totPrograms;
-    }
-    
-    private boolean detectLoops(final ProgramModel programModel)
-    {
-        return !programModel.isAllowed(OpCode.PAINT_RED)
-                && !programModel.isAllowed(OpCode.PAINT_GREEN)
-                && !programModel.isAllowed(OpCode.PAINT_BLUE);
     }
     
     public void bruteForce()
@@ -64,6 +53,7 @@ public class FastSimulator extends Observable
         do
         {
             totSimsteps += simulate();
+            
             totTestedPrograms++;
 
             if (fastBoard.starsLeft == 0)
@@ -100,24 +90,22 @@ public class FastSimulator extends Observable
         int i;
         int state;
         stateStackPtr[0] = 0;
+        stateStackCntr = 0;
         
         while (true)
         {
-            if (detectLoops)
+            state = arrowPos ^ (arrowDir << 12) ^ (pcFunc << 14)
+                    ^ (pcSlot << 17);
+            
+            for (i = 0; i < stateStackPtr[stateStackCntr]; ++i)
             {
-                state = arrowPos ^ (arrowDir << 12) ^ (pcFunc << 14)
-                        ^ (pcSlot << 17);
-                
-                for (i = 0; i < stateStackPtr[stackPtr]; ++i)
+                if (stateStack[i] == state)
                 {
-                    if (stateStack[i] == state)
-                    {
-                        return simsteps;
-                    }
+                    return simsteps;
                 }
-                
-                stateStack[stateStackPtr[stackPtr]++] = state;
             }
+            
+            stateStack[stateStackPtr[stateStackCntr]++] = state;
             
             if (++simsteps == MAX_SIMSTEPS)
             {
@@ -187,18 +175,33 @@ public class FastSimulator extends Observable
                     break;
                     
                 case PAINT_RED:
-                    board[arrowPos].color = Condition.ON_RED;
-                    fastBoard.paintedCells[fastBoard.numPaintedCells++] = arrowPos;
+                    if (board[arrowPos].color != Condition.ON_RED)
+                    {
+                        stateStackCntr = 0;
+                        stateStackPtr[0] = 0;
+                        board[arrowPos].color = Condition.ON_RED;
+                        fastBoard.paintedCells[fastBoard.numPaintedCells++] = arrowPos;
+                    }
                     break;
                     
                 case PAINT_GREEN:
-                    board[arrowPos].color = Condition.ON_GREEN;
-                    fastBoard.paintedCells[fastBoard.numPaintedCells++] = arrowPos;
+                    if (board[arrowPos].color != Condition.ON_GREEN)
+                    {
+                        stateStackCntr = 0;
+                        stateStackPtr[0] = 0;
+                        board[arrowPos].color = Condition.ON_GREEN;
+                        fastBoard.paintedCells[fastBoard.numPaintedCells++] = arrowPos;
+                    }
                     break;
                     
                 case PAINT_BLUE:
-                    board[arrowPos].color = Condition.ON_BLUE;
-                    fastBoard.paintedCells[fastBoard.numPaintedCells++] = arrowPos;
+                    if (board[arrowPos].color != Condition.ON_BLUE)
+                    {
+                        stateStackCntr = 0;
+                        stateStackPtr[0] = 0;
+                        board[arrowPos].color = Condition.ON_BLUE;
+                        fastBoard.paintedCells[fastBoard.numPaintedCells++] = arrowPos;
+                    }
                     break;
                 }
             }
@@ -209,14 +212,21 @@ public class FastSimulator extends Observable
             {
                 if (pcSlot == program[pcFunc].length)
                 {
-                    if (stackPtr > 0)
+                    if (stackPtr == 0)
                     {
-                        pcSlot = slotStack[--stackPtr];
-                        pcFunc = funcStack[stackPtr];
+                        return simsteps;
+                    }
+                    
+                    pcSlot = slotStack[--stackPtr];
+                    pcFunc = funcStack[stackPtr];
+                    
+                    if (stateStackCntr > 0)
+                    {
+                        stateStackCntr--;
                     }
                     else
                     {
-                        return simsteps;
+                        stateStackPtr[0] = 0;
                     }
                 }
             }
@@ -227,10 +237,8 @@ public class FastSimulator extends Observable
                     slotStack[stackPtr] = pcSlot;
                     funcStack[stackPtr++] = pcFunc;
                     
-                    if (detectLoops)
-                    {
-                        stateStackPtr[stackPtr] = stateStackPtr[stackPtr - 1];
-                    }
+                    stateStackCntr++;
+                    stateStackPtr[stateStackCntr] = stateStackPtr[stateStackCntr - 1];
                 }
                 
                 pcSlot = 0;

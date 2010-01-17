@@ -142,6 +142,18 @@ public class ProgramGenerator
         {
             return false;
         }
+        else if (inst.opCode == OpCode.PAINT_RED && inst.condition == Condition.ON_RED)
+        {
+            return false;
+        }
+        else if (inst.opCode == OpCode.PAINT_GREEN && inst.condition == Condition.ON_GREEN)
+        {
+            return false;
+        }
+        else if (inst.opCode == OpCode.PAINT_BLUE && inst.condition == Condition.ON_BLUE)
+        {
+            return false;
+        }
         
         return usedColors.contains(inst.condition);
     }
