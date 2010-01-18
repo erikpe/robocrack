@@ -10,7 +10,7 @@ import robocrack.engine.simulator.Simulator.SimulatorState;
 
 public class SimulatorRunner implements Observer
 {
-    private static final int STEP_INTERVAL_MSEC = 100;
+    private static final int STEP_INTERVAL_MSEC = 50;
     
     private final Simulator simulator;
     private Timer stepTimer = null;
