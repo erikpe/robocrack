@@ -1,0 +1,40 @@
+<project name="robocrack" default="jar">
+
+  <property name="version" value="0.0.1" />
+  <property name="src.dir" value="src" />
+  <property name="build.dir" value="build" />
+  <property name="src.build.dir" value="${build.dir}/bin" />
+  <property name="jarfile" value="${ant.project.name}-${version}.jar" />
+  <property name="src-distfile" value="${ant.project.name}-${version}.tar.gz" />
+
+  <target name="clean">
+    <delete file="${jarfile}" />
+    <delete file="${src-distfile}" />
+    <delete dir="${build.dir}" />
+  </target>
+
+  <target name="compile">
+    <mkdir dir="${src.build.dir}" />
+    <javac srcdir="${src.dir}" destdir="${src.build.dir}" includeantruntime="false" />
+  </target>
+
+  <target name="jar" depends="compile">
+    <jar destfile="${jarfile}">
+      <fileset dir="${src.build.dir}" />
+      <fileset dir="${src.dir}" />
+      <manifest>
+        <attribute name="Main-Class" value="robocrack.main.Main" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="src-dist">
+    <tar destfile="${src-distfile}" compression="gzip">
+      <tarfileset dir="." prefix="${ant.project.name}-${version}">
+        <include name="${src.dir}/" />
+        <include name="build.xml" />
+      </tarfileset>
+    </tar>
+  </target>
+
+</project>
