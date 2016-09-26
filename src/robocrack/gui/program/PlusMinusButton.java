@@ -18,42 +18,42 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
     {
         PLUS("+"),
         MINUS("-");
-        
+
         private final String string;
-        
+
         private PlusMinus(final String string)
         {
             this.string = string;
         }
-        
+
         @Override
         public String toString()
         {
             return string;
         }
     }
-    
+
     private final ProgramModel programModel;
     private final int function;
     private final PlusMinus plusMinus;
-    
+
     PlusMinusButton(final ProgramModel programModel, final int function,
             final PlusMinus plusMinus, final Simulator simulator)
     {
         super(plusMinus.toString());
-        
+
         this.programModel = programModel;
         this.function = function;
         this.plusMinus = plusMinus;
-        
+
         simulator.addObserver(this);
         programModel.addObserver(this);
-        
+
         addActionListener(this);
-        
+
         update();
     }
-    
+
     private void update()
     {
         if (programModel.isLocked())
@@ -69,7 +69,7 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
             setEnabled(enableMinus());
         }
     }
-    
+
     private boolean enablePlus()
     {
         if (programModel.getFunctionLength(function)
@@ -85,10 +85,10 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
         {
             return true;
         }
-        
+
         return false;
     }
-    
+
     private boolean enableMinus()
     {
         if (programModel.getFunctionLength(function) == 0)
@@ -111,27 +111,27 @@ public class PlusMinusButton extends JButton implements Observer, ActionListener
         {
             return false;
         }
-        
+
         return true;
     }
-    
+
     @Override
     public void actionPerformed(final ActionEvent e)
     {
         final int length = programModel.getFunctionLength(function);
-        
+
         switch(plusMinus)
         {
         case PLUS:
             programModel.setFunctionLength(function, length + 1);
             break;
-            
+
         case MINUS:
             programModel.setFunctionLength(function, length - 1);
             break;
         }
     }
-    
+
     @Override
     public void update(final Observable observable, final Object arg)
     {

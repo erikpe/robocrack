@@ -26,16 +26,16 @@ public class InstructionSlotComponent extends SquareComponent implements
 {
     static final int WIDTH = 33;
     static final int HEIGHT = WIDTH;
-    
+
     private final InstructionPosition position;
-    
+
     private final ProgramModel programModel;
     private final GuiModel guiModel;
     private final Simulator simulator;
-    
+
     private final JLabel label;
-    
-    InstructionSlotComponent(final ProgramModel programModel, GuiModel guiModel,
+
+    InstructionSlotComponent(final ProgramModel programModel, final GuiModel guiModel,
             final InstructionPosition position, final Simulator simulator)
     {
         this.programModel = programModel;
@@ -43,21 +43,21 @@ public class InstructionSlotComponent extends SquareComponent implements
         this.simulator = simulator;
         this.position = position;
         this.label = new JLabel();
-        
+
         initialize();
     }
-    
+
     private void initialize()
     {
         label.setForeground(Color.WHITE);
         updateLabel();
         add(label);
-        
+
         programModel.addObserver(this);
         simulator.addObserver(this);
         guiModel.addObserver(this);
     }
-    
+
     @Override
     protected int width()
     {
@@ -69,13 +69,13 @@ public class InstructionSlotComponent extends SquareComponent implements
     {
         return HEIGHT;
     }
-    
+
     @Override
     protected boolean isActive()
     {
         return programModel.isActive(position);
     }
-    
+
     @Override
     protected Color highlightColor(final Color color)
     {
@@ -83,33 +83,33 @@ public class InstructionSlotComponent extends SquareComponent implements
         {
             return super.highlightColor(color);
         }
-        
+
         return color;
     }
-    
+
     private void updateLabel()
     {
         final OpCode opCode = programModel.getOpCode(position);
         final String text = textFromOpCode(opCode);
-        
+
         if (text == null)
         {
             label.setVisible(false);
             return;
         }
-        
+
         label.setText(text);
-        
+
         final int labelWidth = label.getPreferredSize().width;
         final int labelHeight = label.getPreferredSize().height;
-        
+
         final int xBounds = (width() - labelWidth) / 2;
         final int yBounds = (height() - labelHeight) / 2;
-        
+
         label.setBounds(xBounds, yBounds, labelWidth, labelHeight);
         label.setVisible(true);
     }
-    
+
     @Override
     public void paintComponent(final Graphics g)
     {
@@ -120,92 +120,92 @@ public class InstructionSlotComponent extends SquareComponent implements
         paintProgramCounter(g);
         paintStackHighlight(g);
     }
-    
+
     private void paintBlob(final Graphics g)
     {
         final OpCode opCode = programModel.getOpCode(position);
         final Color blobColor = blobColorFromOpCode(opCode);
-        
+
         if (blobColor == null)
         {
             return;
         }
-        
+
         final int xBounds = width() / 4;
         final int yBounds = height() / 4;
         final int width = width() / 2;
         final int height = height() / 2;
-        
+
         g.setColor(blobColor);
         g.fillOval(xBounds, yBounds, width, height);
         g.setColor(Color.BLACK);
         g.drawOval(xBounds, yBounds, width, height);
     }
-    
+
     private void paintArrow(final Graphics g)
     {
         final OpCode opCode = programModel.getOpCode(position);
         final PolygonType polygonType = polygonTypeFromOpCode(opCode);
-        
+
         if (polygonType == null)
         {
             return;
         }
-        
+
         final Polygon polygon = PolygonHelper.makePolygon(polygonType, width(),
                 height());
-        
+
         g.setColor(Color.WHITE);
         g.fillPolygon(polygon);
         g.setColor(Color.BLACK);
         g.drawPolygon(polygon);
     }
-    
+
     private void paintProgramCounter(final Graphics g)
     {
         if (!position.equals(simulator.getProgramCounter()))
         {
             return;
         }
-        
+
         final int blockHeight = 4;
         g.setColor(Color.BLACK);
         g.fillRect(2, height() - 3 - blockHeight, width() - 5, blockHeight);
         g.setColor(Color.BLACK);
         g.drawRect(2, height() - 3 - blockHeight, width() - 5, blockHeight);
     }
-    
+
     private void paintStackHighlight(final Graphics g)
     {
         if (!stackHighlighted())
         {
             return;
         }
-        
+
         final int xBounds = width() - 3 * width() / 8;
         final int yBounds = height() - 3 * height() / 8;
         final int width = width() / 4;
         final int height = height() / 4;
-        
+
         g.setColor(Color.YELLOW);
         g.fillOval(xBounds, yBounds, width, height);
         g.setColor(Color.BLACK);
         g.drawOval(xBounds, yBounds, width, height);
     }
-    
+
     private boolean stackHighlighted()
     {
         if (position.equals(guiModel.getInstPosHighlight()))
         {
             return true;
         }
-        
+
         final StackDepth depth = guiModel.getStackDepthHighlight();
         final InstructionPosition pos = simulator.getStackPointerAt(depth);
-        
+
         return position.equals(pos);
     }
-    
+
     private PolygonType polygonTypeFromOpCode(final OpCode opCode)
     {
         switch (opCode)
@@ -216,7 +216,7 @@ public class InstructionSlotComponent extends SquareComponent implements
         default: return null;
         }
     }
-    
+
     private Color blobColorFromOpCode(final OpCode opCode)
     {
         switch (opCode)
@@ -227,7 +227,7 @@ public class InstructionSlotComponent extends SquareComponent implements
         default: return null;
         }
     }
-    
+
     private String textFromOpCode(final OpCode opCode)
     {
         switch (opCode)
@@ -240,7 +240,7 @@ public class InstructionSlotComponent extends SquareComponent implements
         default: return null;
         }
     }
-    
+
     @Override
     protected Color getBackgroundColor()
     {
@@ -248,7 +248,7 @@ public class InstructionSlotComponent extends SquareComponent implements
         {
             return null;
         }
-        
+
         switch (programModel.getCondition(position))
         {
         case ON_ALL: return Color.GRAY;
@@ -256,10 +256,10 @@ public class InstructionSlotComponent extends SquareComponent implements
         case ON_BLUE: return Color.BLUE;
         case ON_GREEN: return Color.GREEN;
         }
-        
+
         return null;
     }
-    
+
     private OpCode opCodeFromButton(final FunctionButton button)
     {
         switch (button)
@@ -279,7 +279,7 @@ public class InstructionSlotComponent extends SquareComponent implements
         default: return null;
         }
     }
-    
+
     private Condition conditionFromButton(final FunctionButton button)
     {
         switch (button)
@@ -292,7 +292,7 @@ public class InstructionSlotComponent extends SquareComponent implements
         default: return null;
         }
     }
-    
+
     @Override
     protected void leftButtonPressed()
     {
@@ -300,22 +300,22 @@ public class InstructionSlotComponent extends SquareComponent implements
         {
             return;
         }
-        
+
         final FunctionButton button = guiModel.selectedFunctionButton();
         final OpCode opCode = opCodeFromButton(button);
         final Condition condition = conditionFromButton(button);
-        
+
         if (opCode != null)
         {
             programModel.setOpCode(position, opCode);
         }
-        
+
         if (condition != null)
         {
             programModel.setCondition(position, condition);
         }
     }
-    
+
     @Override
     protected void rightButtonPressed()
     {
@@ -324,7 +324,7 @@ public class InstructionSlotComponent extends SquareComponent implements
             programModel.clear(position);
         }
     }
-    
+
     @Override
     protected void noButtonEntered()
     {
@@ -333,7 +333,7 @@ public class InstructionSlotComponent extends SquareComponent implements
             guiModel.setInstPosHighlight(position);
         }
     }
-    
+
     @Override
     protected void noButtonExited()
     {
@@ -342,7 +342,7 @@ public class InstructionSlotComponent extends SquareComponent implements
             guiModel.setInstPosHighlight(null);
         }
     }
-    
+
     @Override
     public void update(final Observable observable, final Object arg)
     {

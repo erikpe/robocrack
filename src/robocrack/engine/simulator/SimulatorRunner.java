@@ -11,16 +11,16 @@ import robocrack.engine.simulator.Simulator.SimulatorState;
 public class SimulatorRunner implements Observer
 {
     private static final int STEP_INTERVAL_MSEC = 50;
-    
+
     private final Simulator simulator;
     private Timer stepTimer = null;
-    
+
     SimulatorRunner(final Simulator simulator)
     {
         this.simulator = simulator;
         simulator.addObserver(this);
     }
-    
+
     synchronized public void playPause()
     {
         if (stepTimer == null)
@@ -32,23 +32,23 @@ public class SimulatorRunner implements Observer
             stopTimer();
         }
     }
-    
+
     synchronized public void step()
     {
         stopTimer();
         simulator.step();
     }
-    
+
     synchronized public void reset()
     {
         stopTimer();
         simulator.reset();
     }
-    
+
     private void startNewTimer()
     {
         stopTimer();
-        
+
         final TimerTask simulatorStepper = new TimerTask()
         {
             @Override
@@ -57,11 +57,11 @@ public class SimulatorRunner implements Observer
                 simulator.step();
             }
         };
-        
+
         stepTimer = new Timer();
         stepTimer.scheduleAtFixedRate(simulatorStepper, 0, STEP_INTERVAL_MSEC);
     }
-    
+
     private void stopTimer()
     {
         if (stepTimer != null)
@@ -70,7 +70,7 @@ public class SimulatorRunner implements Observer
             stepTimer = null;
         }
     }
-    
+
     @Override
     synchronized public void update(final Observable observable, final Object arg)
     {

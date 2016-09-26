@@ -17,70 +17,70 @@ public abstract class SquareComponent extends JComponent implements
     private static final Color DEFAULT_INACTIVE_COLOR = null;
     private static final Color DEFAULT_INACTIVE_BORDER_COLOR = Color.LIGHT_GRAY;
     private static final Color DEFAULT_LOCK_COLOR = Color.RED;
-    
+
     private boolean isHighlighted = false;
-    
+
     public SquareComponent()
     {
         addMouseListener(this);
     }
-    
+
     protected boolean isActive()
     {
         return true;
     }
-    
+
     protected boolean isLocked()
     {
         return true;
     }
-    
+
     protected abstract int width();
-    
+
     protected abstract int height();
-    
+
     protected Color getBackgroundColor()
     {
         return DEFAULT_COLOR;
     }
-    
+
     protected Color getBorderColor()
     {
         return DEFAULT_BORDER_COLOR;
     }
-    
+
     protected Color getInactiveBackgroundColor()
     {
         return DEFAULT_INACTIVE_COLOR;
     }
-    
+
     protected Color getInactiveBorderColor()
     {
         return DEFAULT_INACTIVE_BORDER_COLOR;
     }
-    
+
     protected Color getLockColor()
     {
         return DEFAULT_LOCK_COLOR;
     }
-    
+
     protected Color highlightColor(final Color color)
     {
         int red = color.getRed();
         int green = color.getGreen();
         int blue = color.getBlue();
-        
+
         red = red + 2 * (255 - red) / 3;
         green = green + 2 * (255 - green) / 3;
         blue = blue + 2 * (255 - blue) / 3;
-        
+
         return new Color(red, green, blue);
     }
-    
+
     protected void paintBackground(final Graphics g)
     {
         final Color color;
-        
+
         if (!isActive())
         {
             color = getInactiveBackgroundColor();
@@ -93,18 +93,19 @@ public abstract class SquareComponent extends JComponent implements
         {
             color = getBackgroundColor();
         }
-        
+
         if (color != null)
         {
             g.setColor(color);
             g.fillRect(0, 0, width() - 1, height() - 1);
         }
     }
-    
+
+    @Override
     protected void paintBorder(final Graphics g)
     {
         final Color color;
-        
+
         if (!isActive())
         {
             color = getInactiveBorderColor();
@@ -113,42 +114,42 @@ public abstract class SquareComponent extends JComponent implements
         {
             color = getBorderColor();
         }
-        
+
         if (color != null)
         {
             g.setColor(color);
             g.drawRect(0, 0, width() - 1, height() - 1);
         }
     }
-    
+
     protected void leftButtonPressed() { }
-    
+
     protected void leftButtonReleased() { }
-    
+
     protected void leftButtonEntered() { }
-    
+
     protected void leftButtonExited() { }
-    
+
     protected void rightButtonPressed() { }
-    
+
     protected void rightButtonReleased() { }
-    
+
     protected void rightButtonEntered() { }
-    
+
     protected void rightButtonExited() { }
-    
+
     protected void noButtonEntered() { }
-    
+
     protected void noButtonExited() { }
-    
+
     @Override
     public void mouseClicked(final MouseEvent e) { }
-    
+
     @Override
     public void mouseEntered(final MouseEvent e)
     {
         isHighlighted = true;
-        
+
         if ((e.getModifiers() & InputEvent.BUTTON1_MASK) != 0)
         {
             leftButtonEntered();
@@ -161,15 +162,15 @@ public abstract class SquareComponent extends JComponent implements
         {
             noButtonEntered();
         }
-        
+
         repaint();
     }
-    
+
     @Override
     public void mouseExited(final MouseEvent e)
     {
         isHighlighted = false;
-        
+
         if ((e.getModifiers() & InputEvent.BUTTON1_MASK) != 0)
         {
             leftButtonExited();
@@ -182,10 +183,10 @@ public abstract class SquareComponent extends JComponent implements
         {
             noButtonExited();
         }
-        
+
         repaint();
     }
-    
+
     @Override
     public void mousePressed(final MouseEvent e)
     {
@@ -197,10 +198,10 @@ public abstract class SquareComponent extends JComponent implements
         {
             rightButtonPressed();
         }
-        
+
         repaint();
     }
-    
+
     @Override
     public void mouseReleased(final MouseEvent e)
     {
@@ -212,7 +213,7 @@ public abstract class SquareComponent extends JComponent implements
         {
             rightButtonReleased();
         }
-        
+
         repaint();
     }
 }

@@ -17,49 +17,49 @@ public class SimulatorSettings extends JComponent implements ActionListener, Obs
 {
     private final Simulator simulator;
     private final JCheckBox tailCallBox;
-    
+
     private int preferredWidth = 0;
-    
+
     public SimulatorSettings(final Simulator simulator)
     {
         this.simulator = simulator;
         this.tailCallBox = new JCheckBox("Enable tail call optimization");
-        
+
         initialize();
     }
-    
+
     private void initialize()
     {
         simulator.addObserver(this);
-        
-        int yBounds = addBox(tailCallBox, 0);
+
+        final int yBounds = addBox(tailCallBox, 0);
         setPreferredSize(new Dimension(preferredWidth, yBounds));
-        
+
         update();
     }
-    
+
     private int addBox(final JCheckBox box, final int yBounds)
     {
         box.addActionListener(this);
         add(box);
-        
+
         final int bWidth = box.getPreferredSize().width;
         final int bHeight = box.getPreferredSize().height;
-        
+
         box.setBounds(0, yBounds, bWidth, bHeight);
-        
+
         preferredWidth = Math.max(preferredWidth, bWidth);
-        
+
         return yBounds + bHeight;
     }
-    
+
     private void update()
     {
         tailCallBox.setSelected(simulator.getTailCallOptimization());
         tailCallBox
                 .setEnabled(simulator.getState() != SimulatorState.BRUTE_FORCING);
     }
-    
+
     @Override
     public void update(final Observable observable, final Object arg)
     {

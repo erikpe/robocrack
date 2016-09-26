@@ -11,12 +11,12 @@ public interface BoardSimulator extends BoardViewer
     public void simTurnRight();
 
     public void startSimulation();
-    
+
     public void resetSimulation();
-    
+
     public Cell getCurrentCell();
-    
+
     public void simPaintColor(final CellColor color);
-    
+
     public int simNumStarsLeft();
 }

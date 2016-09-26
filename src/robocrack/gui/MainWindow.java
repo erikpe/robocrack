@@ -23,7 +23,7 @@ public class MainWindow extends JFrame
             final ProgramModel programModel, final Simulator simulator)
     {
         final GuiModel guiModel = new GuiModel();
-        
+
         final BoardButtonPane boardButtonPane = new BoardButtonPane(guiModel,
                 simulator);
         final PuzzleLoaderPane puzzleLoaderPane = new PuzzleLoaderPane(
@@ -38,12 +38,12 @@ public class MainWindow extends JFrame
                 simulator, programModel, boardModel);
         final SimulatorSettings simSettings = new SimulatorSettings(simulator);
         final StackPane stackPane = new StackPane(simulator, guiModel, 15, 3);
-        
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         getContentPane().setLayout(
                 new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
-        
+
         getContentPane().add(boardButtonPane);
         getContentPane().add(puzzleLoaderPane);
         getContentPane().add(boardPane);
@@ -53,7 +53,7 @@ public class MainWindow extends JFrame
         getContentPane().add(simButtonPane);
         getContentPane().add(simSettings);
         getContentPane().add(stackPane);
-        
+
         pack();
         setMinimumSize(getPreferredSize());
     }

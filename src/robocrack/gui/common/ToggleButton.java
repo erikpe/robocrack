@@ -22,13 +22,13 @@ public class ToggleButton extends JToggleButton implements ActionListener,
     private final GuiModel guiModel;
     private final Simulator simulator;
     private final ProgramModel programModel;
-    
+
     public ToggleButton(final Enum<?> buttonEnum, final OpCode opCode,
             final GuiModel guiModel, final Simulator simulator,
             final ProgramModel programModel)
     {
         super(buttonEnum.toString());
-        
+
         this.buttonEnum = buttonEnum;
         this.opCode = opCode;
         this.guiModel = guiModel;
@@ -37,32 +37,32 @@ public class ToggleButton extends JToggleButton implements ActionListener,
 
         initialize();
     }
-    
+
     private void initialize()
     {
         guiModel.addObserver(this);
         simulator.addObserver(this);
-        
+
         if (programModel != null)
         {
             programModel.addObserver(this);
         }
-        
+
         addActionListener(this);
-        
+
         update();
     }
-    
+
     @Override
     public void actionPerformed(final ActionEvent e)
     {
         guiModel.selectButton(buttonEnum);
     }
-    
+
     private void update()
     {
         setSelected(guiModel.isSelected(buttonEnum));
-        
+
         if (programModel != null && opCode != null)
         {
             setEnabled(programModel.isAllowed(opCode)
@@ -73,7 +73,7 @@ public class ToggleButton extends JToggleButton implements ActionListener,
             setEnabled(simulator.getState() == SimulatorState.RESET);
         }
     }
-    
+
     @Override
     public void update(final Observable observable, final Object arg)
     {
